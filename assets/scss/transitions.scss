@@ -1,0 +1,74 @@
+.slideout-enter-from,
+.slideout-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slideout-enter-to,
+.slideout-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slideout-enter-active,
+.slideout-leave-active {
+  transition: all 0.3s ease;
+}
+
+.dropdown-leave-from,
+.dropdown-enter-to {
+  // max-height: 50rem;
+  // overflow: hidden;
+  opacity: 1;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  // overflow: hidden;
+  // max-height: 0;
+
+  opacity: 0;
+}
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.carousel-rtl-enter-from,
+.carousel-ltr-leave-to {
+  transform: translateX(100%);
+  // opacity: 0;
+}
+
+.carousel-rtl-leave-to,
+.carousel-ltr-enter-from {
+  transform: translateX(-100%);
+  // opacity: 0;
+}
+
+.carousel-rtl-enter-active,
+.carousel-rtl-leave-active,
+.carousel-ltr-enter-active,
+.carousel-ltr-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.rtl-enter-active,
+.rtl-leave-active,
+.ltr-enter-active,
+.ltr-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.rtl-enter-from,
+.rtl-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.ltr-enter-from,
+.ltr-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}

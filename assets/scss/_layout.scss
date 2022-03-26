@@ -1,0 +1,73 @@
+/*****************************LAYOUT*******************************/
+
+.contain {
+  object-fit: contain;
+}
+
+.cover {
+  object-fit: cover;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.z-9 {
+  z-index: 9;
+}
+
+.z-99 {
+  z-index: 99;
+}
+
+.z-999 {
+  z-index: 999;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+.right-1 {
+  right: 1rem;
+}
+
+.right-2 {
+  right: 2rem;
+}
+
+.right-4 {
+  right: 4rem;
+}
+
+.top-50-per {
+  top: 50%;
+}
+
+.left-1 {
+  left: 1rem;
+}
