@@ -10,6 +10,11 @@
     "nuxt3": "latest"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.6.2",
+    "colors": "^1.4.0",
+    "html-to-text": "^8.1.0",
+    "nodemailer": "^6.7.3",
+    "pug": "^3.0.2",
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",
     "slugify": "^1.6.5"
