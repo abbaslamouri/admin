@@ -1,7 +1,9 @@
 <script setup>
 const router = useRouter()
 const route = useRoute()
-const { user, token, isAuthenticated, login } = useAuth()
+const config = useRuntimeConfig()
+
+const { user, token, isAuthenticated } = useAuth()
 const { errorMsg, message } = useAppState()
 const showAuthDropdown = ref(false)
 const formUser = reactive({
@@ -18,12 +20,25 @@ const signin = async () => {
   showAuthDropdown.value = false
   errorMsg.value = null
   message.value = null
-  const response = await login(formUser)
-  if (response.ok === false) return (errorMsg.value = response.errorMsg)
-  message.value = 'Login successful'
-  user.value = response.user
-  token.value = response.token
-  isAuthenticated.value=true
+  try {
+    const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/auth/signin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: formUser,
+    })
+    if (error.value) throw error.value
+    const auth = useCookie('auth')
+    auth.value = data.value.auth
+    user.value = data.value.auth.user
+    token.value = data.value.auth.token
+    isAuthenticated.value = true
+    // console.log(data.value)
+    // router.go()
+    message.value = 'Login successful'
+  } catch (err) {
+    // console.log(error.data)
+    errorMsg.value = err.data.message
+  }
 }
 
 const forgotPassword = async () => {
@@ -44,7 +59,7 @@ const forgotPassword = async () => {
         <IconsPersonFill class="fill-slate-50" />
         <h3 class="font-light uppercase">Sign in / Create acount</h3>
       </div>
-      <form class="shadow-md flex-col gap2 bg-slate-50 p2 absolute z-99 text-slate-800" v-if="showAuthDropdown">
+      <form class="shadow-md flex-col gap-2 bg-slate-50 p-2 absolute z-99 text-slate-800" v-if="showAuthDropdown">
         <h3 class="title">Sin in</h3>
         <p class="text-xs">Access your account and place an order:</p>
         <div class="flex-col gap1">
@@ -53,17 +68,17 @@ const forgotPassword = async () => {
         </div>
 
         <div>
-          <button class="btn btn__secondary w-full justify-between px1 py05 text-xs" @click.prevent="forgotPassword">
+          <button class="btn btn__secondary w-full justify-between px-1 py-05 text-xs" @click.prevent="forgotPassword">
             <p>Forgot Password?</p>
             <IconsChevronRight />
           </button>
         </div>
-        <button class="btn btn__secondary w-full flex-row justify-between px1 py05 text-xs" @click.prevent="signin">
+        <button class="btn btn__secondary w-full flex-row justify-between px-1 py-05 text-xs" @click.prevent="signin">
           <p>Sign in</p>
           <IconsChevronRight />
         </button>
         <p class="text-sm">New User?</p>
-        <button class="btn btn__secondary w-full justify-between px1 py05 text-xs" @click.prevent="signup">
+        <button class="btn btn__secondary w-full justify-between px-1 py-05 text-xs" @click.prevent="signup">
           <p>Create an account</p>
           <IconsChevronRight />
         </button>

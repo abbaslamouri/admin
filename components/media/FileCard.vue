@@ -1,6 +1,6 @@
 <script setup>
 import slugify from 'slugify'
-import iconType from '~/composables/useUtils'
+// import iconType from '~/composables/useUtils'
 const config = useRuntimeConfig()
 
 const props = defineProps({
@@ -16,28 +16,28 @@ const emit = defineEmits(['itemUploadedError'])
 
 const uploadProgress = ref(0)
 
-const upload = async () => {
-  try {
-    const response = await $fetch('/api/v1/media/image', {
-      method: 'POST',
-      body: {
-        name: props.file.file.name,
-        filename: props.file.file.name,
-        path: `/uploads/${props.file.file.name}`,
-        slug: slugify(props.file.file.name, { lower: true }),
-        mimetype: props.file.file.type,
-        size: props.file.file.size,
-        folder: props.selectedFolder._id,
-        url: `${config.BASE_URL}/public/uploads/${props.file.file.name}`,
-      },
-    })
-  } catch (error) {
-    emit('itemUploadedError', error.data)
-  }
-}
+// const upload = async () => {
+//   try {
+//     const response = await $fetch('/api/v1/media/image', {
+//       method: 'POST',
+//       body: {
+//         name: props.file.file.name,
+//         filename: props.file.file.name,
+//         path: `/uploads/${props.file.file.name}`,
+//         slug: slugify(props.file.file.name, { lower: true }),
+//         mimetype: props.file.file.type,
+//         size: props.file.file.size,
+//         folder: props.selectedFolder._id,
+//         url: `${config.BASE_URL}/public/uploads/${props.file.file.name}`,
+//       },
+//     })
+//   } catch (error) {
+//     emit('itemUploadedError', error.data)
+//   }
+// }
 
 onMounted(async () => {
-  if (props.file.uploadState === 'uploading') await upload()
+  // if (props.file.uploadState === 'uploading') await upload()
 })
 </script>
 
@@ -52,14 +52,14 @@ onMounted(async () => {
     </div>
     <div v-else class="file">
       <div class="icon">
-        <component v-if="file.mimetype" :is="iconType(file.mimetype)" />
+        <!-- <component v-if="file.mimetype" :is="iconType(file.mimetype)" /> -->
       </div>
       <p class="filename">
-        {{ file.filename }}
+        {{ file.name }}
       </p>
     </div>
-    <IconsProgressRing v-if="uploadProgress" :progress="uploadProgress" class="progress" />
-    <div class="tooltip">{{ file.filename }}</div>
+    <!-- <IconsProgressRing v-if="uploadProgress" :progress="uploadProgress" class="progress" /> -->
+    <div class="tooltip">{{ file.name }}</div>
   </div>
 </template>
 
@@ -126,7 +126,7 @@ onMounted(async () => {
     color: white;
     padding: 1rem 2rem;
     border-radius: 5px;
-    font-size:1rem;
+    font-size: 1rem;
     font-weight: 500;
     opacity: 0;
     visibility: hidden;

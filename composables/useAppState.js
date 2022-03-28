@@ -8,6 +8,7 @@ const useAppState = () => {
   const message = useState('message', () => '')
   const showCartSlideout = useState('showCartSlideout', () => false)
   const showMediaSelector = useState('showMediaSelector', () => false)
+  const showModal = useState('showModal', () => false)
 
   const alert = useState('alert', () => {
     return {
@@ -33,11 +34,13 @@ const useAppState = () => {
   return {
     errorMsg,
     message,
+    showModal,
     // galleryMedia,
     // mediaReference,
     showMediaSelector,
     showCartSlideout,
     alert,
+
     // fetchAll,
     // saveDoc,
     // saveDocs,

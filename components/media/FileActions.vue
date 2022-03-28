@@ -54,13 +54,13 @@ const clearKeyword = async () => {
 </script>
 
 <template>
-  <div class="file-actions">
-    <button class="btn add-new-file" @click="$emit('fileUploadBtnClicked')">
+  <div class="file-actions flex-row items-center justify-between px-1 py-2 border-b-stone-300">
+    <button class="btn btn__new-media gap-1 min-w-9" @click="$emit('fileUploadBtnClicked')">
       <IconsUpload />
       <span>Upload Files</span>
     </button>
-    <div class="search-sort">
-      <div class="search">
+    <div class="search-sort flex-row gap-2 items-center">
+      <div class="min-w-20">
         <Search @searchKeywordSelected="$emit('searchKeywordSelected', $event)" />
       </div>
       <div class="sort">
@@ -71,10 +71,18 @@ const clearKeyword = async () => {
         />
       </div>
     </div>
-    <div class="actions">
-      <div class="move-to">
-        <div class="base-select" v-if="selectedMedia.length">
-          <select v-model="moveToFolderId" @change="showMediaMoveAlert = true">
+    <div class="flex-row items-center gap-2">
+      <div class="">
+        <div class="" v-if="selectedMedia.length">
+          <FormsBaseSelect
+            v-model="moveToFolderId"
+            label="Move Selected To Folder"
+            :options="folders.filter((f) => f._id != selectedFolder._id)"
+            nullOption="Select Folder"
+            @update:modelValue="showMediaMoveAlert = true"
+          />
+
+          <!-- <select v-model="moveToFolderId" @change="showMediaMoveAlert = true">
             <option value="">Select Folder</option>
             <option
               v-for="option in folders.filter((f) => f._id != selectedFolder._id)"
@@ -83,24 +91,24 @@ const clearKeyword = async () => {
             >
               {{ option.name }}
             </option>
-          </select>
-          <label>Move To Folder</label>
+          </select> -->
+          <!-- <label>Move To Folder</label> -->
         </div>
       </div>
-      <button class="btn delete" v-if="selectedMedia.length" @click="showMediaDeleteAlert = true">
-        <IconsDeleteFill />
+      <button class="btn" v-if="selectedMedia.length" @click="showMediaDeleteAlert = true">
+        <IconsDeleteFill class="fill-red-600" />
       </button>
     </div>
-    <Alert v-if="showMediaMoveAlert" @ok="handleMoveMedia" @cancel="handleCancelMoveMedia">
+    <!-- <Alert v-if="showMediaMoveAlert" @ok="handleMoveMedia" @cancel="handleCancelMoveMedia">
       <h3>
         `Are you sure you want to move these files to folder
         <span>{{ folders.find((f) => f._id === moveToFolderId).name }}</span> ?`
       </h3>
-    </Alert>
-    <Alert v-if="showMediaDeleteAlert" @ok="handleDeleteMedia" @cancel="showMediaDeleteAlert = false">
+    </Alert> -->
+    <!-- <Alert v-if="showMediaDeleteAlert" @ok="handleDeleteMedia" @cancel="showMediaDeleteAlert = false">
       <h3>Are you sure you want to delete these files?</h3>
       <p>Your will not be able to recover these files.</p>
-    </Alert>
+    </Alert> -->
   </div>
 </template>
 
@@ -108,39 +116,39 @@ const clearKeyword = async () => {
 @import '@/assets/scss/variables';
 
 .file-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4rem;
-  padding: 1rem;
-  border-bottom: 1px #ccc solid;
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  // gap: 4rem;
+  // padding: 1rem;
+  // border-bottom: 1px #ccc solid;
 
   .add-new-file {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid $sky-400;
-    color: $sky-600;
+    // display: flex;
+    // align-items: center;
+    // gap: 0.5rem;
+    // border: 1px solid $sky-400;
+    // color: $sky-600;
 
     svg {
-      fill: $sky-600;
+      // fill: $sky-600;
     }
   }
 
   .search-sort {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
+    // display: flex;
+    // align-items: center;
+    // gap: 3rem;
 
     .search {
-      min-width: 20rem;
+      // min-width: 20rem;
     }
   }
 
   .actions {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+    // display: flex;
+    // align-items: center;
+    // gap: 2rem;
 
     .move-to {
       width: 18rem;

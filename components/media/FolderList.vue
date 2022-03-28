@@ -11,9 +11,9 @@ defineEmits(['folderSelected'])
 </script>
 
 <template>
-  <div class="folder-list" v-if="folders.length">
+  <div class="flex-row gap-2 wrap" v-if="folders.length">
     <button
-      class="btn folder"
+      class="btn btn__folder"
       :class="{ selected: !selectedFolder || !selectedFolder._id }"
       @click="$emit('folderSelected', {})"
     >
@@ -21,7 +21,7 @@ defineEmits(['folderSelected'])
       <span>All</span>
     </button>
     <button
-      class="btn folder"
+      class="btn btn__folder"
       v-for="folder in folders"
       :key="folder._id"
       :class="{ selected: selectedFolder && selectedFolder._id === folder._id }"
@@ -35,23 +35,13 @@ defineEmits(['folderSelected'])
 <style lang="scss" scoped>
 @import '@/assets/scss/variables';
 
-.folder-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
+.btn {
+  &.selected {
+    background-color: $slate-400;
+    color: $slate-50;
 
-  .btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-radius: 5px;
-
-    svg {
-      fill: $slate-800;
-    }
-
-    &.selected {
-      background-color: $slate-300;
+    svg{
+      fill: $slate-50;
     }
   }
 }

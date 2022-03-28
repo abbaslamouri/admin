@@ -70,6 +70,7 @@ export default {
       :aria-required="typeof $attrs.required != undefined ? true : null"
       @mousedown.prevent="handleMousedown"
     >
+      <option value="">{{ nullOption }}</option>
       <option
         v-for="option in options"
         :key="option.key"

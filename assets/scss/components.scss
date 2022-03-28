@@ -162,6 +162,48 @@
     }
   }
 
+  &__folder {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 5px;
+    background-color: $slate-300;
+    font-size: 1.2rem;
+    padding: 0.25rem 1rem;
+
+    &:hover {
+      background-color: $slate-400;
+    }
+
+    // svg {
+    //   fill: $slate-800;
+    // }
+  }
+
+  &__new-media {
+    // display: flex;
+    // align-items: center;
+    // gap: 1rem;
+    border-radius: 5px;
+    // background-color: $slate-300;
+    font-size: 1.2rem;
+    padding: 0.25rem 1rem;
+    border: 1px solid $sky-600;
+    color: $sky-600;
+
+    svg {
+      fill: $sky-600;
+    }
+
+    &:hover {
+      background-color: $slate-200;
+    }
+
+    // svg {
+    //   fill: $slate-800;
+    // }
+  }
+
   &-heading {
     background-color: $slate-800;
     color: white;

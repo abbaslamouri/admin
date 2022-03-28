@@ -28,7 +28,6 @@ const errorMsg = ref('')
 const uuid = useUniqueId().getId()
 
 const handleBlur = (event) => {
-  console.log(event.target.value)
   if (event.target.value) event.target.classList.add('dirty')
   else event.target.classList.remove('dirty')
 }

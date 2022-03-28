@@ -10,10 +10,10 @@ export default defineNuxtConfig({
     API_BASE: process.env.API_BASE,
   },
 
-  privateRuntimeConfig: {
-    DB_URL: process.env.DB_URL,
-    COOKIE_EXPIRE: process.env.JWT_COOKIE_EXPIRE,
-    BASE_URL: process.env.BASE_URL,
-    NODE_ENV: process.env.NODE_ENV,
-  },
+  // privateRuntimeConfig: {
+  //   DB_URL: process.env.DB_URL,
+  //   COOKIE_EXPIRE: process.env.JWT_COOKIE_EXPIRE,
+  //   BASE_URL: process.env.BASE_URL,
+  //   NODE_ENV: process.env.NODE_ENV,
+  // },
 })

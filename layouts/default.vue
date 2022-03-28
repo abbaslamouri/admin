@@ -1,8 +1,8 @@
 <script setup>
 // import { useAuth } from '~/store/useAuth'
 // import { useCart } from '~/store/useCart'
-const { isAuthenticated } = useAuth()
-const { showCartSlideout } = useAppState()
+// const { isAuthenticated } = useAuth()
+// const { showCartSlideout } = useAppState()
 
 // const cart = useCart()
 
@@ -29,16 +29,16 @@ const { showCartSlideout } = useAppState()
           <Branding />
           <div class="profile-cart">
             <div class="profile">
-              <LoginDropdown v-if="!isAuthenticated" />
-              <ProfileDropdown v-else />
+              <!-- <LoginDropdown v-if="!isAuthenticated" /> -->
+              <!-- <ProfileDropdown v-else /> -->
             </div>
-            <EcommerceCheckoutNavCart />
-            <EcommerceCheckoutCart v-if="showCartSlideout" />
+            <!-- <EcommerceCheckoutNavCart /> -->
+            <!-- <EcommerceCheckoutCart v-if="showCartSlideout" /> -->
           </div>
         </div>
       </div>
       <nav class="nav">
-        <MainNav />
+        <!-- <MainNav /> -->
       </nav>
     </header>
     <main>

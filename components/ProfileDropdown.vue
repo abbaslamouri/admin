@@ -1,16 +1,27 @@
 <script setup>
-const { user, token, isAuthenticated, logout } = useAuth()
+const { user, token, isAuthenticated } = useAuth()
 const { errorMsg, message } = useAppState()
 const showProfileDropdown = ref(false)
+const config = useRuntimeConfig()
 
 const signout = async () => {
   showProfileDropdown.value = false
+  // errorMsg.value = null
+  // message.value = null
+  const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/auth/signout`)
+  // if (error.value) errorMsg.value = error.value.data.message
 
-  const response = await logout()
-  errorMsg.value = null
-  message.value = null
-  if (response.ok === false) return (errorMsg.value = response.errorMsg)
-  token.value = null
+  const auth = useCookie('auth')
+  auth.value = data.value.auth
+
+  console.log(error.value ? error.value.data : '')
+  console.log(data.value)
+
+  // const response = await logout()
+  // errorMsg.value = null
+  // message.value = null
+  // if (response.ok === false) return (errorMsg.value = response.errorMsg)
+  // token.value = null
   isAuthenticated.value = false
   if (process.client) localStorage.removeItem('cart')
   message.value = 'You are logged out'
@@ -20,7 +31,7 @@ const signout = async () => {
 <template>
   <div class="profile-dropdown relative">
     <div
-      class="header flex-row items-center gap1 text-xs border border-slate-50 py05 px1 cursor-pointer br3 relative z-99"
+      class="header flex-row items-center gap-1 text-xs border border-slate-50 py-05 px-1 cursor-pointer br-3 relative z-99"
       v-bind:class="{ selected: showProfileDropdown }"
     >
       <IconsPersonFill class="fill-slate-50" />
@@ -28,24 +39,24 @@ const signout = async () => {
     </div>
     <div
       v-if="showProfileDropdown"
-      class="menu absolute flex-col gap2 p2 bg-slate-50 z-99 text-slate-800 w-full text-xs"
+      class="menu absolute flex-col gap-2 p-2 bg-slate-50 z-99 text-slate-800 w-full text-xs"
     >
       <h3 class="">My Accoun</h3>
       <ul>
         <li v-if="user.role === 'admin'">
-          <NuxtLink :to="{ name: `admin` }">Admin</NuxtLink>
+          <NuxtLink :to="{ name: `index` }">Admin</NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="{ name: `admin` }">Order History</NuxtLink>
+          <NuxtLink :to="{ name: `index` }">Order History</NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="{ name: `admin` }">Account Information?</NuxtLink>
+          <NuxtLink :to="{ name: `index` }">Account Information?</NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="{ name: `admin` }">Addresses?</NuxtLink>
+          <NuxtLink :to="{ name: `index` }">Addresses?</NuxtLink>
         </li>
       </ul>
-      <button class="btn btn__secondary py05 px1" @click="signout">Sign out</button>
+      <button class="btn btn__secondary py-05 px-1" @click="signout">Sign out</button>
     </div>
     <div class="overlay" v-if="showProfileDropdown" @click="showProfileDropdown = !showProfileDropdown"></div>
   </div>

@@ -24,7 +24,6 @@ const sortByOptions = [
 watch(
   () => sort,
   (sortVal) => {
-    // console.log(sortVal)
     emit('toggleMediaSort', sortVal)
   },
   { deep: true }
@@ -32,47 +31,19 @@ watch(
 </script>
 
 <template>
-  <div class="sort">
-    <div class="sort-field">
+  <div class="flex-row gap-2 text-sm">
+    <div class="min-w-16">
       <FormsBaseSelect :options="sortByOptions" v-model="sort.field" label="Sort by" />
     </div>
-    <div class="sort-order" @click="toggleSort">
+    <div class="flex-row items-center gap-05" @click="toggleSort">
       <span>Sort Order</span>
       <button class="btn" @click="sort.order == '-' ? (sort.order = ``) : (sort.order = `-`)">
-        <IconsSouth v-if="sort.order == '-'" />
-        <IconsNorth v-else />
+        <IconsSouth class="w-2 h-2 fill-sky-600" v-if="sort.order == '-'" />
+        <IconsNorth class="w-2 h-2 fill-sky-600" v-else />
       </button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/variables';
-
-.sort {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  font-size: 1.2rem;
-
-  .sort-field {
-    min-width: 15rem;
-  }
-
-  .sort-order {
-    display: flex;
-    align-items: center;
-
-    button {
-      border: none;
-      background-color: transparent;
-
-      svg {
-        fill: $sky-600;
-        width: 2rem;
-        height: 2rem;
-      }
-    }
-  }
-}
 </style>
