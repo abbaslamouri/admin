@@ -4,6 +4,16 @@ import { defineNuxtConfig } from 'nuxt3'
 export default defineNuxtConfig({
   css: ['@/assets/scss/main.scss'],
 
+  // modules: [
+  //   '@nuxt/image',
+  // ],
+  // buildModules: ['@nuxt/image'],
+
+  image: {
+    domains: ['https://localhost:5000/uploads/'],
+    // Options
+  },
+
   publicRuntimeConfig: {
     BASE_URL: process.env.BASE_URL,
 

@@ -16,7 +16,7 @@ const mediaCount = ref(null)
 const folders = ref([])
 const selectedFolder = ref({})
 const page = ref(1)
-const perPage = ref(20)
+const perPage = ref(60)
 const folderSortField = ref('name')
 const folderSortOrder = ref('')
 const mediaSortField = ref('name')
@@ -56,7 +56,7 @@ const fetchMedia = async () => {
   try {
     const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/media/`, {
       params: {
-        fields: 'name, slug, folder, path, mimetype',
+        fields: 'name, slug, folder, path, url, mimetype',
         page: page.value,
         limit: perPage.value,
         sort: `${mediaSortOrder.value}${mediaSortField.value}`,
@@ -132,9 +132,14 @@ const handleUplodItemsSelected = async (files) => {
     ulploadItems.value[prop].progress = 0
     const xhr = new XMLHttpRequest()
     xhr.open('POST', `${config.BASE_URL}/${config.API_BASE}/media`, true)
+    xhr.responseType = 'json'
+    // xhr.setRequestHeader('Content-Type', 'application/json')
 
     const formData = new FormData()
     formData.append('file', files[prop], files[prop].name)
+    formData.append('folder', selectedFolder.value._id)
+
+
 
     xhr.onerror = (error) => {
       console.log(error)
@@ -144,13 +149,19 @@ const handleUplodItemsSelected = async (files) => {
       console.log((100 * event.loaded) / event.total)
       ulploadItems.value[prop].progress = (100 * event.loaded) / event.total
     }
-    xhr.load = (data) => {
-      console.log(data)
+    xhr.onload = () => {
+      console.log(xhr.response)
+      if (xhr.response.status === 'fail') {
+        errorMsg.value = xhr.response.message
+        ulploadItems.value[prop].status = 'failed'
+        ulploadItems.value[prop].progress = 100
+        xhr.abort()
+      }
     }
 
     xhr.send(formData)
+    console.log(files[prop])
   }
-  console.log(ulploadItems.value)
 }
 
 // const setPage = async (currentPage) => {
@@ -335,7 +346,8 @@ const handleSearch = async (event) => {
         <template #default>
           <div class="modal-content">
             <div v-for="file in ulploadItems" :key="file.name">
-              {{ file.name }} ====={{ file.progress }}<IconsProgressRing :progress="file.progress" />
+              {{ file.name }}==={{ file.status }} ====={{ file.progress
+              }}<IconsProgressRing :progress="file.progress" />
             </div>
           </div>
         </template>

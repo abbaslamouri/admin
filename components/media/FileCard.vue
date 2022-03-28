@@ -14,6 +14,10 @@ const props = defineProps({
 })
 const emit = defineEmits(['itemUploadedError'])
 
+function getImageUrl(url) {
+  return new URL(url, import.meta.url).href
+}
+
 const uploadProgress = ref(0)
 
 // const upload = async () => {
@@ -48,7 +52,8 @@ onMounted(async () => {
     @mouseleave="$event.target.classList.remove('hovered')"
   >
     <div v-if="file.mimetype && file.mimetype.includes('image')" class="thumb">
-      <img :src="`${file.path}`" />
+      <img :src="`${file.url}`" />
+      <!-- <nuxt-img src="table-lamp-background-2000x1333.jpg" /> -->
     </div>
     <div v-else class="file">
       <div class="icon">
