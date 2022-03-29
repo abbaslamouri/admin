@@ -22,6 +22,7 @@ const emit = defineEmits([
   'moveMediaToFolder',
   'deleteMedia',
   'searchKeywordSelected',
+  'deleteMediaBtnClicked',
 ])
 
 const keyword = ref(null)
@@ -95,7 +96,7 @@ const clearKeyword = async () => {
           <!-- <label>Move To Folder</label> -->
         </div>
       </div>
-      <button class="btn" v-if="selectedMedia.length" @click="showMediaDeleteAlert = true">
+      <button class="btn" v-if="selectedMedia.length" @click="$emit('deleteMediaBtnClicked')">
         <IconsDeleteFill class="fill-red-600" />
       </button>
     </div>
@@ -112,67 +113,4 @@ const clearKeyword = async () => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import '@/assets/scss/variables';
-
-.file-actions {
-  // display: flex;
-  // justify-content: space-between;
-  // align-items: center;
-  // gap: 4rem;
-  // padding: 1rem;
-  // border-bottom: 1px #ccc solid;
-
-  .add-new-file {
-    // display: flex;
-    // align-items: center;
-    // gap: 0.5rem;
-    // border: 1px solid $sky-400;
-    // color: $sky-600;
-
-    svg {
-      // fill: $sky-600;
-    }
-  }
-
-  .search-sort {
-    // display: flex;
-    // align-items: center;
-    // gap: 3rem;
-
-    .search {
-      // min-width: 20rem;
-    }
-  }
-
-  .actions {
-    // display: flex;
-    // align-items: center;
-    // gap: 2rem;
-
-    .move-to {
-      width: 18rem;
-    }
-
-    .delete {
-      border: none;
-
-      svg {
-        fill: $red-600;
-        width: 2.5rem;
-        height: 2.5rem;
-      }
-    }
-
-    .edit {
-      svg {
-        fill: $green-800;
-      }
-    }
-  }
-
-  .btn {
-    border-radius: 5px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

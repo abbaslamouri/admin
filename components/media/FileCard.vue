@@ -52,7 +52,8 @@ onMounted(async () => {
     @mouseleave="$event.target.classList.remove('hovered')"
   >
     <div v-if="file.mimetype && file.mimetype.includes('image')" class="thumb">
-      <img :src="`${file.url}`" />
+      <img :src="`${file.path}`" />
+      <!-- <span class="text-xs">{{file.slug}}</span> -->
       <!-- <nuxt-img src="table-lamp-background-2000x1333.jpg" /> -->
     </div>
     <div v-else class="file">

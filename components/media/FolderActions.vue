@@ -77,7 +77,7 @@ const selectFolderToDelete = async () => {
 }
 
 const deleteFolder = async () => {
-  errorMsg.value = null
+  errorMsg.value = ""
   alert.value.show = false
   if (props.media.filter((m) => m.folder._id == props.selectedFolder._id).length) {
     return (
@@ -119,7 +119,7 @@ watch(
 <template>
   <div class="flex-row items-center justify-between">
     <div class="flex-row items-center gap-2">
-      <button class="btn btn__new-media gap-1" @click="showForm = true">
+      <button class="btn btn__new-media gap-1 text-xs" @click="showForm = true">
         <IconsFolderPlus />
         <span> New Folder </span>
       </button>

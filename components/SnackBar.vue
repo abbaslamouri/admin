@@ -54,7 +54,7 @@ const transitionName = computed(() => (getPosition().includes('right') ? 'rtl' :
 <template>
   <transition :name="transitionName">
     <div
-      class="snackbar flex-row items-center gap-2 fixed z-9999 top-7 p-2 max-w-60 text-slate-50 tracking-wide text-sm"
+      class="snackbar flex-row items-center gap-2 fixed z-9999 top-7 p-2 max-w-100 text-slate-50 tracking-wide text-sm"
       :class="{
         error: snackbarType === 'Error',
         success: snackbarType === 'Success',

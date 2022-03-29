@@ -13,7 +13,7 @@ defineEmits(['folderSelected'])
 <template>
   <div class="flex-row gap-2 wrap" v-if="folders.length">
     <button
-      class="btn btn__folder"
+      class="btn btn__folder text-xs"
       :class="{ selected: !selectedFolder || !selectedFolder._id }"
       @click="$emit('folderSelected', {})"
     >
@@ -21,7 +21,7 @@ defineEmits(['folderSelected'])
       <span>All</span>
     </button>
     <button
-      class="btn btn__folder"
+      class="btn btn__folder text-xs"
       v-for="folder in folders"
       :key="folder._id"
       :class="{ selected: selectedFolder && selectedFolder._id === folder._id }"
@@ -40,7 +40,7 @@ defineEmits(['folderSelected'])
     background-color: $slate-400;
     color: $slate-50;
 
-    svg{
+    svg {
       fill: $slate-50;
     }
   }
