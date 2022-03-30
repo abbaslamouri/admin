@@ -31,7 +31,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex-row gap-2 text-sm">
+  <div class="flex-row gap-1 text-xs">
     <div class="min-w-16">
       <FormsBaseSelect :options="sortByOptions" v-model="sort.field" label="Sort by" />
     </div>
@@ -45,5 +45,4 @@ watch(
   </div>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

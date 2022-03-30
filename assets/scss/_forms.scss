@@ -52,6 +52,22 @@
   display: inline-block;
   font-size: 1.4rem;
   color: $slate-800;
+  // border: 2px solid blue;
+  // min-width: 20rem;
+  width: 100%;
+
+  .label {
+    position: absolute;
+    left: 1rem;
+    top: -0.2rem;
+    color: $slate-400;
+
+    // transform: translateY(1.25rem);
+    background-color: white;
+    
+    // display: inline-block;
+    // padding: 2rem 0;
+  }
 
   select {
     width: 100%;
@@ -59,7 +75,7 @@
     // background-color: $slate-200;
     border-radius: 3px;
     border: 2px solid $slate-400;
-    padding: 0 2rem;
+    padding: 0 1rem;
     cursor: pointer;
     margin-top: 0.5rem;
     appearance: none;

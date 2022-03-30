@@ -14,11 +14,11 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['folderSelected', 'folderSaved', 'folderDeleted', 'toggleFolderSortOrder'])
+const emit = defineEmits(['folderSaved', 'toggleFolderSortOrder', 'deleteFolder'])
 
 const { message, errorMsg, alert } = useAppState()
 const showForm = ref(false)
-const folderToDelete = ref(null)
+// const folderToDelete = ref(null)
 const newFolder = ref({})
 
 const editFolder = () => {
@@ -38,19 +38,16 @@ const saveNewFolder = async () => {
   try {
     newFolder.value.slug = slugify(newFolder.value.name, { lower: true })
     if (newFolder.value._id) {
-      const { data, pending, error } = await useFetch(
-        `${config.BASE_URL}/${config.API_BASE}/media/folders/${newFolder.value._id}`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: newFolder.value,
-        }
-      )
+      const { data, pending, error } = await useFetch(`${config.API_URL}/media/folders/${newFolder.value._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: newFolder.value,
+      })
       if (error.value) throw error.value
       console.log(data.value)
       emit('folderSaved', data.value.doc)
     } else {
-      const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/media/folders`, {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/media/folders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: newFolder.value,
@@ -65,55 +62,6 @@ const saveNewFolder = async () => {
     errorMsg.value = err.data.message
   }
 }
-
-const selectFolderToDelete = async () => {
-  folderToDelete.value = props.selectedFolder
-  showAlert(
-    'Are you sure you want to delete this folder?',
-    'If your folder conatains files, you will have to move or delete those files first.',
-    'deleteFolder',
-    true
-  )
-}
-
-const deleteFolder = async () => {
-  errorMsg.value = ""
-  alert.value.show = false
-  if (props.media.filter((m) => m.folder._id == props.selectedFolder._id).length) {
-    return (
-      (errorMsg.value =
-        'You cannot delete non-empty folders.  Please delete or move all media to another folder before deleting folders.'),
-      'Error'
-    )
-  }
-  try {
-    const { data, pending, error } = await useFetch(
-      `${config.BASE_URL}/${config.API_BASE}/media/folders/${folderToDelete.value._id}`,
-      { method: 'DELETE' }
-    )
-    if (error.value) throw error.value
-    console.log(data.value)
-    emit('folderDeleted')
-    message.value = `Folder ${props.selectedFolder.name} deleted succesfully`
-  } catch (err) {
-    errorMsg.value = err.data.message
-  }
-}
-
-const showAlert = (heading, paragraph, action, showCancelBtn) => {
-  alert.value.heading = heading
-  alert.value.paragraph = paragraph
-  alert.value.action = action
-  alert.value.showCancelBtn = showCancelBtn
-  alert.value.show = true
-}
-
-watch(
-  () => alert.value.show,
-  (currentVal) => {
-    if (currentVal === 'ok' && alert.value.action === 'deleteFolder') deleteFolder()
-  }
-)
 </script>
 
 <template>
@@ -145,7 +93,7 @@ watch(
         <button class="btn" @click="editFolder">
           <IconsEditFill class="fill-green-800" />
         </button>
-        <button class="btn" @click="selectFolderToDelete">
+        <button class="btn" @click="$emit('deleteFolder')">
           <IconsDeleteFill class="fill-red-600" />
         </button>
       </div>
