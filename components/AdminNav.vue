@@ -61,6 +61,17 @@ const showEcommreceSubMenu = ref(false)
               </NuxtLink>
             </div>
           </li>
+          <li class="border-t-slate-500">
+            <div class="admin-nav-link">
+              <NuxtLink
+                class="flex-row items-center gap-1 py-1 px-1 uppercase ml-1"
+                :to="{ name: 'ecommerce-attributes' }"
+              >
+                <IconsShoppingBag class="w-2 h-2 fill-slate-50" />
+                <p class="text-slate-50">Attributes</p>
+              </NuxtLink>
+            </div>
+          </li>
         </ul>
       </transition>
     </li>

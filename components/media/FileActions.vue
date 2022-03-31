@@ -15,10 +15,14 @@ defineProps({
   mediaSortOrder: {
     type: String,
   },
+  sortOptions: {
+    type: Array,
+    required: true,
+  },
 })
 const emit = defineEmits([
   'fileUploadBtnClicked',
-  'toggleMediaSort',
+  'toggleSort',
   'moveMediaToFolder',
   'deleteMedia',
   'searchKeywordSelected',
@@ -35,7 +39,6 @@ const handleMoveMedia = async () => {
   emit('moveMediaToFolder', moveToFolderId.value)
   moveToFolderId.value = ''
 }
-
 </script>
 
 <template>
@@ -46,11 +49,7 @@ const handleMoveMedia = async () => {
         <span>Upload Files</span>
       </button>
       <div class="">
-        <MediaSort
-          :mediaSortField="mediaSortField"
-          :mediaSortOrder="mediaSortOrder"
-          @toggleMediaSort="$emit('toggleMediaSort', $event)"
-        />
+        <Sort :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
       </div>
       <div class="flex-row items-center gap-2 min-w-60">
         <div class="min-w-20" v-if="selectedMedia.length">

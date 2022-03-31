@@ -1,30 +1,34 @@
 <script setup>
 const props = defineProps({
-  mediaSortField: {
+  sortField: {
     type: String,
   },
-  mediaSortOrder: {
+  sortOrder: {
     type: String,
+  },
+  sortOptions: {
+    type: Object,
+    required: true,
   },
 })
 
-const emit = defineEmits(['toggleMediaSort'])
+const emit = defineEmits(['toggleSort'])
 
 const sort = reactive({
-  field: props.mediaSortField,
-  order: props.mediaSortOrder,
+  field: props.sortField,
+  order: props.sortOrder,
 })
 
-const sortByOptions = [
-  { key: 'name', name: 'Filename' },
-  { key: 'size', name: 'File size' },
-  { key: 'dateCreated', name: 'Date Created' },
-]
+// const sortOptions = [
+//   { key: 'name', name: 'Filename' },
+//   { key: 'size', name: 'File size' },
+//   { key: 'dateCreated', name: 'Date Created' },
+// ]
 
 watch(
   () => sort,
   (sortVal) => {
-    emit('toggleMediaSort', sortVal)
+    emit('toggleSort', sortVal)
   },
   { deep: true }
 )
@@ -33,9 +37,9 @@ watch(
 <template>
   <div class="flex-row gap-1 text-xs">
     <div class="min-w-16">
-      <FormsBaseSelect :options="sortByOptions" v-model="sort.field" label="Sort by" />
+      <FormsBaseSelect :options="sortOptions" v-model="sort.field" label="Sort by" />
     </div>
-    <div class="flex-row items-center gap-05" @click="toggleSort">
+    <div class="flex-row items-center gap-05">
       <span>Sort Order</span>
       <button class="btn" @click="sort.order == '-' ? (sort.order = ``) : (sort.order = `-`)">
         <IconsSouth class="w-2 h-2 fill-sky-600" v-if="sort.order == '-'" />

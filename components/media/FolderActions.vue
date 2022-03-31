@@ -6,6 +6,10 @@ const props = defineProps({
   media: {
     type: Array,
   },
+  sortOptions: {
+    type: Array,
+    required: true,
+  },
   folderSortOrder: {
     type: String,
   },
@@ -14,7 +18,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['folderSaved', 'toggleFolderSortOrder', 'deleteFolder'])
+const emit = defineEmits(['folderSaved', 'toggleSort', 'deleteFolder'])
 
 const { message, errorMsg, alert } = useAppState()
 const showForm = ref(false)
@@ -82,12 +86,13 @@ const saveNewFolder = async () => {
       </transition>
     </div>
     <div class="text-sm flex-row gap-3">
-      <div class="flex-row items-center" @click="$emit('toggleFolderSortOrder')">
-        <span>Sort Order</span>
-        <button class="btn">
+      <div class="flex-row items-center">
+        <!-- <span>Sort Order</span> -->
+        <Sort :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
+        <!-- <button class="btn">
           <IconsSouth class="w-2 h-2 fill-sky-600" v-if="folderSortOrder == '-'" />
           <IconsNorth class="w-2 h-2 fill-sky-600" v-else />
-        </button>
+        </button> -->
       </div>
       <div class="flex-row items-center gap-1" v-if="selectedFolder._id">
         <button class="btn" @click="editFolder">
