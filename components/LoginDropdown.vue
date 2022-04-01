@@ -1,4 +1,6 @@
 <script setup>
+import { Attachment } from '@sendgrid/helpers/classes'
+
 const router = useRouter()
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -21,23 +23,23 @@ const signin = async () => {
   errorMsg.value = null
   message.value = null
   try {
-    const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/auth/signin`, {
+    const { data, pending, error } = await useFetch(`${config.API_URL}/auth/signin`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // headers: useRequestHeaders(['cookie']),
+
       body: formUser,
     })
     if (error.value) throw error.value
+    console.log('data', data.value)
     const auth = useCookie('auth')
     auth.value = data.value.auth
     user.value = data.value.auth.user
     token.value = data.value.auth.token
     isAuthenticated.value = true
-    // console.log(data.value)
-    // router.go()
     message.value = 'Login successful'
   } catch (err) {
-    // console.log(error.data)
-    errorMsg.value = err.data.message
+    console.log(err)
+    // errorMsg.value = err.data.message
   }
 }
 
