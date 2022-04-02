@@ -32,7 +32,6 @@ export default {
 <template>
   <label :class="`base-select base-select-${uuid}`" v-if="label" :for="`base-select-${uuid}`">
     <div class="label text-xs px-1">{{ label }}</div>
-
     <select
       ref="selectRef"
       :value="modelValue"

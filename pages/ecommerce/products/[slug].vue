@@ -1,36 +1,26 @@
 <script setup>
-import slugify from 'slugify'
-
 useMeta({
   title: 'Product | YRL',
 })
 definePageMeta({
   layout: 'admin',
-  // middleware: ['saved-product'],
 })
 
-// const { product, variants } = useStore()
-// const { galleryMedia, mediaReference, fetchBySlug, fetchAll, saveDoc, saveDocs, deleteMany } = useAppState()
-const { errorMsg, message, showMediaSelector } = useAppState()
+const { product } = useStore()
+const { errorMsg, message, showMediaSelector, mediaReference, galleryMedia } = useAppState()
 
 const route = useRoute()
 const router = useRouter()
 const { $fetchBySlug, $saveDoc } = useNuxtApp()
-const product = ref({})
-
-// const fields = '-updatedAt'
-// const showAttributesSlideout = ref(false)
+const showAttributesSlideout = ref(false)
 // const showVariantsSlideout = ref(false)
 let response = null
 const galleryIntro = ref('This image gallery contains all images associated with this product including its variants.')
 const slug = route.params.slug === ' ' ? null : route.params.slug
-// const params = computed(() => {
-//   return {
-//     fields,
-//     slug,
-//   }
-// })
-product.value = await $fetchBySlug('products', product.value)
+
+response = await $fetchBySlug('products', slug)
+if (Object.values(response).length) product.value = response
+console.log(product.value)
 
 // response = await fetchBySlug('products', slug)
 // if (response && response.ok === false) errorMsg.value = response.error
@@ -44,32 +34,25 @@ product.value = await $fetchBySlug('products', product.value)
 //     ).docs
 //   : []
 
-const updateGeneralInfo = (generalInfo) => {
-  product.value = { ...product.value, ...generalInfo }
-}
+// const updateGeneralInfo = (generalInfo) => {
+//   product.value = { ...product.value, ...generalInfo }
+// }
 
-const updatePrice = (priceSalePrice) => {
-  product.value = { ...product.value, ...priceSalePrice }
-}
+// const updatePrice = (priceSalePrice) => {
+//   product.value = { ...product.value, ...priceSalePrice }
+// }
 
-// // Set category gallery
-// const setImageGallery = async (media) => {
-//   console.log('mediap', media)
-//   console.log(product.value)
-//   for (const prop in media) {
-//     const index = product.value.gallery.findIndex((el) => el._id == media[prop]._id)
-//     if (index === -1) {
-//       product.value.gallery.push(media[prop])
-//     }
-//   }
-//   console.log(product.value.gallery)
+// const updateStock = (stock) => {
+//   product.value = { ...product.value, ...stock }
 // }
 
 const saveProduct = async () => {
   if (!product.value.name) return (errorMsg.value = 'Product name is required')
+  console.log(product.value)
   // product.value.slug = slugify(product.value.name, { lower: true })
   // if (!product.value.permalink) product.value.permalink = slugify(product.value.name, { lower: true })
-  product.value = await $saveDoc('products', product.value)
+  const id = product.value._id ? product.value._id : null
+  product.value = await $saveDoc('products', product.value, id)
   // console.log('SAVE', response)
   // if (!response) return
   // product.value = response
@@ -85,39 +68,51 @@ const saveProduct = async () => {
   // response = await saveDocs('variants', variants.value)
   // if (!response) return
   // router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
-  // message.value = 'product and variants saved succesfully'
+  message.value = 'product and variants saved succesfully'
   // showAttributesSlideout.value = false
   // router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
 }
 // provide('saveProduct', saveProduct)
 
-// const handleNewMediaSelectBtnClicked = () => {
-//   mediaReference.value = 'productMedia'
-//   showMediaSelector.value = true
-// }
+const handleNewMediaSelectBtnClicked = () => {
+  mediaReference.value = 'productMedia'
+  showMediaSelector.value = true
+}
+
+// Set category gallery
+const setImageGallery = async (media) => {
+  console.log('mediap', media)
+  console.log(product.value)
+  for (const prop in media) {
+    const index = product.value.gallery.findIndex((el) => el._id == media[prop]._id)
+    if (index === -1) {
+      product.value.gallery.push(media[prop])
+    }
+  }
+  console.log(product.value.gallery)
+}
 
 // const updateStoreGallery = (gallery) => {
 //   console.log(gallery)
 //   product.value.gallery = gallery
 // }
 
-// watch(
-//   () => galleryMedia.value,
-//   (currentVal) => {
-//     console.log(currentVal)
-//     if (mediaReference.value === 'productMedia') setImageGallery(currentVal)
-//     // store.showMediaSelector = false
-//     // store.galleryMedia = []
-//   },
-//   { deep: true }
-// )
+watch(
+  () => galleryMedia.value,
+  (currentVal) => {
+    console.log(currentVal)
+    if (mediaReference.value === 'productMedia') setImageGallery(currentVal)
+    // store.showMediaSelector = false
+    // store.galleryMedia = []
+  },
+  { deep: true }
+)
 
 // provide('saveProduct', saveProduct)
 </script>
 
 <template>
   <div class="hfull flex-col items-center gap-2 p-3">
-    {{ product }}
     <header class="flex-col gap-2 w-full max-width-130">
       <div class="go-back" id="product-go-back">
         <NuxtLink class="admin-link" :to="{ name: 'ecommerce-products' }">
@@ -133,9 +128,15 @@ const saveProduct = async () => {
       </div>
 
       <div class="flex-col gap-2">
-        <EcommerceProductGeneralInfo :product="product" @updateGeneralInfo="updateGeneralInfo" />
-        <EcommerceProductPrice :product="product" @updatePrice="updatePrice" />
-        <!-- <EcommerceAdminProductStockManagement /> -->
+        <EcommerceProductGeneralInfo
+          :product="product"
+          @updateGeneralInfo="product.value = { ...product.value, ...$event }"
+        />
+        <EcommerceProductPrice :product="product" @updatePrice="product.value = { ...product.value, ...$event }" />
+        <EcommerceProductStockManagement
+          :product="product"
+          @updateStock="product.value = { ...product.value, ...$event }"
+        />
         <section class="admin-image-gallery shadow-md p-2 flex-col gap-2 bg-white" id="image-gallery">
           <div class="flex-row items-center justify-between text-sm mb-1">
             <div class="uppercase inline-block border-b-stone-300 font-bold pb05">Image Gallery</div>
@@ -146,13 +147,13 @@ const saveProduct = async () => {
               <IconsInfo class="w-3 h-3 fill-sky-600" />
               <p>{{ galleryIntro }}</p>
             </div>
-            <!-- <EcommerceAdminImageGallery
+            <EcommerceImageGallery
               :gallery="product.gallery"
               :galleryIntro="galleryIntro"
               galleryType="product"
               @removeGalleryImage="product.gallery.splice($event, 1)"
               @setGalleryImage="product.gallery[$event.index] = $event.value"
-            /> -->
+            />
             <div class="image-select-actions">
               <button class="btn btn__image-select" @click.prevent="handleNewMediaSelectBtnClicked">
                 <IconsImage />
@@ -165,13 +166,15 @@ const saveProduct = async () => {
 
         <EcommerceProductAttributesContent
           v-if="product._id && product.productType === 'variable'"
+          :product="product"
           @showAttributesSlideout="showAttributesSlideout = $event"
         />
-        <!-- <EcommerceAdminProductsAttributesSlideout
-          v-if="showAttributesSlideout"
+        <EcommerceProductAttributesSlideout
+          v-if="!showAttributesSlideout"
+          :product="product"
           @closeSlideout="showAttributesSlideout = false"
           @saveAttributes="saveProduct"
-        /> -->
+        />
 
         <!-- <EcommerceAdminProductsVariantsContent
           @showVariantsSlideout="showVariantsSlideout = $event"
@@ -182,7 +185,7 @@ const saveProduct = async () => {
           @closeSlideout="showVariantsSlideout = false"
           @saveVariants="saveProduct"
         /> -->
-        <!-- <EcommerceAdminProductDetails /> -->
+        <EcommerceProductDetails :product="product" @updateDetails="product.value = { ...product.value, ...$event }" />
 
         <!-- <EcommerceAdminProductShippingOptions :product="product" /> -->
         <!-- <EcommerceAdminProductDigitalDelivery :product="product" /> -->

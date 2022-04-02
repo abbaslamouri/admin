@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 // const { fetchAll, deleteById } = useFactory()
-const { $myFetch } = useNuxtApp()
+const { $fetchAll } = useNuxtApp()
 const config = useRuntimeConfig()
 const { errorMsg, message, alert } = useAppState()
 
@@ -51,7 +51,7 @@ const pages = computed(() =>
 )
 
 const fetchAll = async () => {
-  const response = await $myFetch('products', params.value)
+  const response = await $fetchAll('products', params.value)
   console.log(response)
   products.value = response.docs
   totalCount.value = response.totalCount
@@ -129,7 +129,6 @@ watch(
 )
 
 await fetchAll()
-
 </script>
 
 <template>

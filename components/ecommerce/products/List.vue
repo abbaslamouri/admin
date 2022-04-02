@@ -27,7 +27,7 @@ const setActions = (payload) => {
 }
 const handleEditProduct = (slug) => {
   resetActions()
-  router.push({ name: 'admin-ecommerce-products-slug', params: { slug } })
+  router.push({ name: 'ecommerce-products-slug', params: { slug } })
 }
 
 const handleDeleteProduct = (productId) => {

@@ -7,8 +7,10 @@ const props = defineProps({
 
 const emit = defineEmits(['updateGeneralInfo'])
 
-const generalInfo = reactive({ ...props.product })
-// const { product } = useStore()
+const generalInfo = reactive({
+  name: props.product.name,
+  productType: props.product.productType,
+})
 
 watch(
   () => generalInfo,

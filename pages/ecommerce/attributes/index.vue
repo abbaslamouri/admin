@@ -8,7 +8,7 @@ definePageMeta({
 
 const config = useRuntimeConfig()
 const { errorMsg, message, alert } = useAppState()
-const { $myFetch } = useNuxtApp()
+const { $fetchAll } = useNuxtApp()
 const showActionKeys = ref([])
 const attributes = ref([])
 const termToDeleteId = ref('')
@@ -48,9 +48,10 @@ const pages = computed(() =>
 )
 
 const fetchAll = async () => {
-  const response = await $myFetch('attributes', params.value)
+  const response = await $fetchAll('attributes', params.value)
   attributes.value = response.docs
   totalCount.value = response.totalCount
+  console.log(attributes.value)
 }
 
 const resetActions = () => {
@@ -103,7 +104,7 @@ const deleteAttribute = async () => {
   // message.value = ''
   try {
     console.log('LLLLLLLL')
-    await $myFetch('attributes', {}, 'DELETE', attributeToDeleteId.value)
+    await $fetchAll('attributes', {}, 'DELETE', attributeToDeleteId.value)
 
     // const {
     //   data: attributeData,
