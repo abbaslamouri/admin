@@ -1,22 +1,19 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-})
+const { product } = useStore()
 </script>
 
 <template>
-  <div class="extra-fields" id="extra-fields">
-    <header class="admin-section-header">
-      <p class="title">Extra Fields</p>
-      <button class="btn btn-heading" @click="product.extraFields.push({ name: '', isRequired: false })">
-        <IconsPlus />
-        <span>Add</span>
-      </button>
-    </header>
-    <div class="content">
+  <section class="shadow-md w-full bg-white p-2 br-5" id="extra-fields">
+    <div class="flex-row items-center justify-between text-sm mb-1">
+      <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Extra Fields</div>
+      <div>
+        <button class="btn btn-heading" @click="product.extraFields.push({ name: '', isRequired: false })">
+          <IconsPlus class="fill-slate-50 w-2 h-2" />
+          <span>Add</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex-col gap-2">
       <p>Collect custom information from your customer.</p>
       <div class="fields">
         <div class="field" v-for="(field, k) in product.extraFields" :key="`extra-field-${k}`">
@@ -29,7 +26,7 @@ defineProps({
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>

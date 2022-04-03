@@ -1,5 +1,5 @@
 <script setup>
-defineEmits(['showVariantsSlideout'])
+defineEmits(['toggleVariantsSlideout'])
 const { product } = useStore()
 </script>
 
@@ -7,7 +7,7 @@ const { product } = useStore()
   <section class="shadow-md w-full bg-white p-2 br-5" id="variants">
     <div class="flex-row items-center justify-between text-sm mb-1">
       <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Variant</div>
-      <button class="btn btn-heading" @click="$emit('showVariantsSlideout', true)">
+      <button class="btn btn-heading" @click="$emit('toggleVariantsSlideout', true)">
         <span v-show="!product.variants.length">Add</span>
         <span v-show="product.variants.length">Edit</span>
       </button>

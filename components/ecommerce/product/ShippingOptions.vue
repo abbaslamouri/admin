@@ -1,19 +1,15 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-})
+const { product } = useStore()
 </script>
 
 <template>
-  <div class="shipping-options shadow-md" id="shipping-options">
-    <header class="admin-section-header">
-      <p class="title">Shipping Options</p>
-      <FormsBaseToggle v-model="product.shippingOptions" label="Enabled" />
-    </header>
-  </div>
+  <section class="shadow-md w-full bg-white p-2 br-5" id="shipping-options">
+    <div class="flex-row items-center justify-between text-sm mb-1">
+      <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Shipping Options</div>
+      <div><FormsBaseToggle v-model="product.shippingOptions" label="Enabled" /></div>
+    </div>
+    <div class="flex-col gap-2"></div>
+  </section>
 </template>
 
 <style lang="scss" scoped>

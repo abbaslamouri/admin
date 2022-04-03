@@ -11,68 +11,34 @@ const { errorMsg, message, showMediaSelector, mediaReference, galleryMedia } = u
 
 const route = useRoute()
 const router = useRouter()
-const { $fetchBySlug, $saveDoc } = useNuxtApp()
+const { $fetchBySlug, $saveDoc, $deleteDocs } = useNuxtApp()
 const showAttributesSlideout = ref(false)
 const showVariantsSlideout = ref(false)
 let response = null
 const galleryIntro = ref('This image gallery contains all images associated with this product including its variants.')
-const slug = route.params.slug === ' ' ? null : route.params.slug
+let slug = route.params.slug === ' ' ? null : route.params.slug
 
 response = await $fetchBySlug('products', slug)
 if (Object.values(response).length) product.value = response
+else product.value = { productType: 'simple', gallery: [], attributes: [], variants: [], categories: [] }
 console.log(product.value)
 
-// response = await fetchBySlug('products', slug)
-// if (response && response.ok === false) errorMsg.value = response.error
-// if (response) product.value = response
-// variants.value = product.value._id
-//   ? (
-//       await fetchAll('variants', {
-//         fields: 'product, attrattributeTerms, gallery',
-//         product: product.value._id,
-//       })
-//     ).docs
-//   : []
-
-// const updateGeneralInfo = (generalInfo) => {
-//   product.value = { ...product.value, ...generalInfo }
-// }
-
-// const updatePrice = (priceSalePrice) => {
-//   product.value = { ...product.value, ...priceSalePrice }
-// }
-
-// const updateStock = (stock) => {
-//   product.value = { ...product.value, ...stock }
-// }
-
 const saveProduct = async () => {
-  if (!product.value.name) return (errorMsg.value = 'Product name is required')
   console.log(product.value)
-  // product.value.slug = slugify(product.value.name, { lower: true })
-  // if (!product.value.permalink) product.value.permalink = slugify(product.value.name, { lower: true })
+  if (!product.value.name) return (errorMsg.value = 'Product name is required')
   const id = product.value._id ? product.value._id : null
-  product.value = await $saveDoc('products', product.value, id)
-  // console.log('SAVE', response)
-  // if (!response) return
-  // product.value = response
-  // console.log('Product', product.value)
-  // response = await deleteMany('variants', { product: product.value._id })
-  // if (!response) return
-
-  // if (!variants.value.length) {
-  //   router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
-  //   return (message.value = 'product saved succesfully')
-  // }
-  // console.log('Variants', variants.value)
-  // response = await saveDocs('variants', variants.value)
-  // if (!response) return
-  // router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
-  message.value = 'product and variants saved succesfully'
-  // showAttributesSlideout.value = false
-  // router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
+  const newProduct = await $saveDoc('products', product.value, id)
+  if (!newProduct) return
+  slug = newProduct.slug
+  message.value = 'product saved succesfully'
+  response = await $deleteDocs('variants', { docs: product.value.variants })
+  if (!response) return
+  if (product.value.variants.length) response = await $saveDoc('variants', product.value.variants)
+  router.push({ name: 'ecommerce-products-slug', params: { slug } })
+  message.value = 'product saved succesfully'
+  // response = await $fetchBySlug('products', slug)
+  // if (response) product.value = response
 }
-// provide('saveProduct', saveProduct)
 
 const handleNewMediaSelectBtnClicked = () => {
   mediaReference.value = 'productMedia'
@@ -92,23 +58,14 @@ const setImageGallery = async (media) => {
   console.log(product.value.gallery)
 }
 
-// const updateStoreGallery = (gallery) => {
-//   console.log(gallery)
-//   product.value.gallery = gallery
-// }
-
 watch(
   () => galleryMedia.value,
   (currentVal) => {
     console.log(currentVal)
     if (mediaReference.value === 'productMedia') setImageGallery(currentVal)
-    // store.showMediaSelector = false
-    // store.galleryMedia = []
   },
   { deep: true }
 )
-
-// provide('saveProduct', saveProduct)
 </script>
 
 <template>
@@ -121,13 +78,13 @@ watch(
       </div>
       <h3 class="header">Edit Product</h3>
     </header>
-    <!-- {{ product }} -->
     <main class="main flex-1 max-width-130 w-full">
       <div class="left-sidebar shadow-md">
         <EcommerceProductLeftSidebar :product="product" />
       </div>
-
       <div class="flex-col gap-2">
+        {{ product }}
+
         <EcommerceProductGeneralInfo
           :product="product"
           @updateGeneralInfo="product.value = { ...product.value, ...$event }"
@@ -166,42 +123,39 @@ watch(
 
         <EcommerceProductAttributesContent
           v-if="product._id && product.productType === 'variable'"
-          @showAttributesSlideout="showAttributesSlideout = $event"
+          @toggleAttributesSlideout="showAttributesSlideout = $event"
         />
         <EcommerceProductAttributesSlideout
           v-if="showAttributesSlideout"
-          @closeAttributesSlideout="showAttributesSlideout = false"
+          @toggleAttributesSlideout="showAttributesSlideout = $event"
           @saveAttributes="saveProduct"
         />
 
         <EcommerceProductVariantsContent
-          @showVariantsSlideout="showVariantsSlideout = $event"
+          @toggleVariantsSlideout="showVariantsSlideout = $event"
           v-if="product._id && product.productType === 'variable' && product.attributes.length"
         />
         <EcommerceProductVariantsSlideout
           v-if="showVariantsSlideout"
-          @closeSlideout="showVariantsSlideout = false"
+          @toggleVariantsSlideout="showVariantsSlideout = $event"
           @saveVariants="saveProduct"
         />
         <EcommerceProductDetails :product="product" @updateDetails="product.value = { ...product.value, ...$event }" />
 
-        <!-- <EcommerceAdminProductShippingOptions :product="product" /> -->
-        <!-- <EcommerceAdminProductDigitalDelivery :product="product" /> -->
-        <!-- <EcommerceAdminProductExtraFields :product="product" /> -->
-        <!-- <EcommerceAdminProductSeo :product="product" /> -->
-        <!-- <EcommerceAdminProductMisc :product="product" /> -->
+        <EcommerceProductShippingOptions :product="product" />
+        <EcommerceProductDigitalDelivery :product="product" />
+        <EcommerceProductExtraFields :product="product" />
+        <EcommerceProductSeo :product="product" />
+        <EcommerceProductMisc :product="product" />
       </div>
       <div class="right-sidebar">
         <EcommerceProductRightSidebar @productStatusUpdated="product.status = $event" @saveProduct="saveProduct" />
       </div>
-
-      <div class="product-details">
-        <div class="go-to-top">
-          <a href="#product-go-back" class="btn">Go To Top</a>
-        </div>
-      </div>
     </main>
-    <footer class="w-full max-width-130">Footer</footer>
+    <div class="w-full flex-row justify-end px-4">
+      <a href="#product-go-back" class="btn btn__secondary px-2 py-1">Go To Top</a>
+    </div>
+    <footer class="w-full max-width-130 bg-slate-300 px-2 py-1 br-5 flex-row justify-center text-2xl">Footer</footer>
   </div>
 </template>
 

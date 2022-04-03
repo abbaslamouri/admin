@@ -1,7 +1,7 @@
 <script setup>
 // import isEqual from 'lodash.isequal'
 
-const emit = defineEmits(['saveVariants', 'closeSlideout'])
+const emit = defineEmits(['saveVariants', 'toggleVariantsSlideout'])
 
 const { product } = useStore()
 const { alert, errorMsg } = useAppState()
@@ -149,7 +149,7 @@ const addSingleVariant = () => {
 }
 
 const updateVariants = async () => {
-  if (!checkMissingVariantTerms() || !checkDuplicateVariants()) return
+  // if (!checkMissingVariantTerms() || !checkDuplicateVariants()) return
   for (const i in product.value.variants) {
     for (const j in product.value.variants[i].gallery) {
       const index = product.value.gallery.findIndex((m) => m._id == product.value.variants[i].gallery[j]._id)
@@ -157,7 +157,7 @@ const updateVariants = async () => {
     }
   }
 
-  emit('closeSlideout', false)
+  emit('toggleVariantsSlideout', false)
   emit('saveVariants', false)
 }
 
@@ -190,13 +190,13 @@ const closeSlideout = () => {
       false
     )
   } else {
-    emit('closeSlideout', false)
+    emit('toggleVariantsSlideout', false)
   }
 }
 
-const cancelVariants = () => {
-  product.value.variants = JSON.parse(current.value)
-  emit('closeSlideout', false)
+const cancelVariantUpdate = () => {
+  product.value.variants = JSON.parse(current)
+  emit('toggleVariantsSlideout', false)
 }
 
 const handleVariantsAction = () => {
@@ -270,7 +270,7 @@ watch(
           <h3 class="font-bold text-lg">Edit Variants</h3>
           <button class="btn btn__close" @click.prevent="closeSlideout"><IconsClose /></button>
         </div>
-        <div class="flex-1 p-2 flex-col gap-2">
+        <div class="flex-1 p-2 flex-col gap-2 overflow-auto">
           <div class="flex-row items-center justify-between bg-white p-2 br-3 shadow-md">
             <h2>Variants</h2>
             <div class="flex-row align-center gap-2">
@@ -297,10 +297,10 @@ watch(
               <button class="btn btn__primary min-w-12 justify-center" @click="preBulkVariants">Bulk&nbsp;Add</button>
             </div>
           </div>
-          <div>
+          <div >
             <EcommerceProductVariantsEmptyMsg
               v-if="!product.variants.length"
-              @closevariantsSlideout="$emit('closevariantsSlideout')"
+              @togglevariantsSlideout="$emit('togglevariantsSlideout')"
             />
             <EcommerceProductVariantsList v-else @removeVariant="showRemoveVariantAlert" />
           </div>
@@ -310,7 +310,7 @@ watch(
           <button
             class="btn btn__primary py-05 px-3"
             :disabled="current == JSON.stringify(product.variants)"
-            @click.prevent="saveVariants"
+            @click.prevent="updateVariants"
           >
             Save Changes
           </button>

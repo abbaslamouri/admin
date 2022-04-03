@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['saveAttributes', 'closeAttributesSlideout', 'updateAttributes', 'closeAttributesSlideout'])
+const emit = defineEmits(['saveAttributes', 'updateAttributes', 'toggleAttributesSlideout'])
 
 const { $fetchAll } = useNuxtApp()
 const { product } = useStore()
@@ -62,11 +62,11 @@ const closeSlideout = () => {
     showAlert(
       'You have unsaved changes',
       'Please save your changes before closing this window or click cancel to exit without saving.',
-      'closeAttributesSlideout',
+      'toggleAttributesSlideout',
       false
     )
   } else {
-    emit('closeAttributesSlideout')
+    emit('toggleAttributesSlideout')
   }
 }
 
@@ -85,12 +85,12 @@ const saveAttributes = async () => {
   }
   product.value.attributes = newAttributes
   emit('saveAttributes')
-  emit('closeAttributesSlideout')
+  emit('toggleAttributesSlideout')
 }
 
 const cancelAttributesUpdate = () => {
   product.value.attributes = JSON.parse(current)
-  emit('closeAttributesSlideout')
+  emit('toggleAttributesSlideout')
 }
 
 const showDeleteAttributeAlert = (attributeIndex) => {
@@ -201,7 +201,7 @@ const showAlert = (heading, paragraph, action, showCancelBtn) => {
 watch(
   () => alert.value.show,
   (currentVal) => {
-    if (currentVal === 'ok' && alert.value.action === 'closeAttributesSlideout') {
+    if (currentVal === 'ok' && alert.value.action === 'toggleAttributesSlideout') {
       alert.value.show = false
       alert.value.action = ''
     }
@@ -222,7 +222,7 @@ watch(
           <h3 class="font-bold text-lg">Edit Attributes</h3>
           <button class="btn btn__close" @click.prevent="closeSlideout"><IconsClose /></button>
         </div>
-        <div class="flex-1 p-2 flex-col gap-2 ">
+        <div class="flex-1 p-2 flex-col gap-2">
           <div class="flex-row items-center justify-between bg-white p-2 br-3 shadow-md">
             <h2>Attributes</h2>
             <div class="flex-row gap-2">

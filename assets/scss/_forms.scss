@@ -1,215 +1,215 @@
 .base-input {
-	position: relative;
-	font-size: 1.2rem;
-	padding-top: 1rem;
-	margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 1.2rem;
+  padding-top: 1rem;
+  margin-bottom: 0.5rem;
 
-	input {
-		appearance: none;
-		padding: 1rem 2rem;
-		border-radius: 3px;
-		width: 100%;
-		outline: none;
-		font-size: 1.2rem;
-		border: 2px solid $slate-300;
-		transition: 0.3s ease;
-		z-index: 1;
+  input {
+    appearance: none;
+    padding: 1rem 2rem;
+    border-radius: 3px;
+    width: 100%;
+    outline: none;
+    font-size: 1.2rem;
+    border: 2px solid $slate-300;
+    transition: 0.3s ease;
+    z-index: 1;
 
-		&:focus,
-		&.dirty {
-			border-color: $slate-400;
-			transition-delay: 0.1s;
-		}
+    &:focus,
+    &.dirty {
+      border-color: $slate-400;
+      transition-delay: 0.1s;
+    }
 
-		&:focus + .placeholder,
-		&.dirty + .placeholder {
-			top: 1rem;
-			font-size: 1rem;
-			background-color: #ffffff;
-		}
-	}
+    &:focus + .placeholder,
+    &.dirty + .placeholder {
+      top: 1rem;
+      font-size: 1rem;
+      background-color: #ffffff;
+    }
+  }
 
-	.placeholder {
-		position: absolute;
-		left: 1.6rem;
-		top: calc(50% + 0.5rem);
-		transform: translateY(-50%);
-		color: $slate-400;
-		padding: 0 0.5rem;
-		transition: 0.3s ease;
-	}
+  .placeholder {
+    position: absolute;
+    left: 1.6rem;
+    top: calc(50% + 0.5rem);
+    transform: translateY(-50%);
+    color: $slate-400;
+    padding: 0 0.5rem;
+    transition: 0.3s ease;
+  }
 
-	.currency {
-		position: absolute;
-		left: 1.2rem;
-		top: calc(50% - 0.1rem);
-		font-size: 1rem;
-	}
+  .currency {
+    position: absolute;
+    left: 1.2rem;
+    top: calc(50% - 0.1rem);
+    font-size: 1rem;
+  }
 }
 
 .base-select {
-	position: relative;
-	display: inline-block;
-	font-size: 1.4rem;
-	color: $slate-800;
-	width: 100%;
+  position: relative;
+  display: inline-block;
+  font-size: 1.4rem;
+  color: $slate-800;
+  width: 100%;
 
-	.label {
-		position: absolute;
-		left: 1rem;
-		top: -0.2rem;
-		color: $slate-400;
+  .label {
+    position: absolute;
+    left: 1rem;
+    top: -0.2rem;
+    color: $slate-400;
 
-		background-color: white;
-	}
+    background-color: white;
+  }
 
-	select {
-		width: 100%;
-		min-height: 3.5rem;
-		border-radius: 3px;
-		border: 2px solid $slate-400;
-		padding: 0 1rem;
-		cursor: pointer;
-		margin-top: 0.5rem;
-		appearance: none;
-		outline: none;
-	}
+  select {
+    width: 100%;
+    min-height: 3.5rem;
+    border-radius: 3px;
+    border: 2px solid $slate-400;
+    padding: 0 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    appearance: none;
+    outline: none;
+  }
 
-	&::after {
-		content: '';
-		border-width: 0.5rem;
-		border-style: solid;
-		border-color: transparent;
-		border-top-color: $slate-800;
-		display: inline-block;
-		position: absolute;
-		right: 1rem;
-		bottom: 1rem;
-		border-radius: 0.2rem;
-	}
+  &::after {
+    content: '';
+    border-width: 0.5rem;
+    border-style: solid;
+    border-color: transparent;
+    border-top-color: $slate-800;
+    display: inline-block;
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    border-radius: 0.2rem;
+  }
 
-	ul {
-		background-color: $slate-500;
-		position: absolute;
-		width: 96%;
-		left: 2%;
-		top: 40%;
-		border-radius: 3px;
-		z-index: 1;
+  ul {
+    background-color: $slate-500;
+    position: absolute;
+    width: 96%;
+    left: 2%;
+    top: 40%;
+    border-radius: 3px;
+    z-index: 1;
 
-		li {
-			padding: 0.5rem 1rem;
-			color: $slate-50;
-			font-size: 1.2rem;
-			cursor: pointer;
-		}
-	}
+    li {
+      padding: 0.5rem 1rem;
+      color: $slate-50;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  }
 }
 
 .base-textarea {
-	position: relative;
-	font-size: 1.2rem;
-	border-radius: 0.25rem;
-	width: 100%;
-	background-color: white;
-	border: 2px solid $slate-300;
-	z-index: 1;
-	cursor: text;
+  position: relative;
+  font-size: 1.2rem;
+  border-radius: 0.25rem;
+  width: 100%;
+  background-color: white;
+  border: 2px solid $slate-300;
+  z-index: 1;
+  cursor: text;
 
-	&:focus-within {
-		border-color: $slate-400;
-	}
+  &:focus-within {
+    border-color: $slate-400;
+  }
 
-	textarea {
-		display: inline-block;
-		padding: 1rem 2rem;
-		width: 100%;
-		height: 100%;
-		background-color: transparent;
-		appearance: none;
-		resize: none;
-		outline: none;
-		border: none;
-		transition-delay: 0.1s;
+  textarea {
+    display: inline-block;
+    padding: 1rem 2rem;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    appearance: none;
+    resize: none;
+    outline: none;
+    border: none;
+    transition-delay: 0.1s;
 
-		&:focus + .placeholder {
-			top: -0.9rem;
-			font-size: 1rem;
-			background-color: #ffffff;
-			z-index: 1;
-		}
-	}
+    &:focus + .placeholder {
+      top: -0.9rem;
+      font-size: 1rem;
+      background-color: #ffffff;
+      z-index: 1;
+    }
+  }
 
-	.placeholder {
-		position: absolute;
-		left: 1.6rem;
-		top: 1rem;
-		color: $slate-400;
-		padding: 0 0.5rem;
-		transition: 0.3s ease;
-		z-index: -1;
-	}
+  .placeholder {
+    position: absolute;
+    left: 1.6rem;
+    top: 1rem;
+    color: $slate-400;
+    padding: 0 0.5rem;
+    transition: 0.3s ease;
+    z-index: -1;
+  }
 }
 
 .base-selects {
-	position: relative;
-	--size: 0.5em;
-	border-radius: 0.25rem;
-	height: 4.5rem;
-	border: 1px solid $slate-200;
-	background-color: white;
-	overflow: hidden;
+  position: relative;
+  --size: 0.5em;
+  border-radius: 0.25rem;
+  height: 4.5rem;
+  border: 1px solid $slate-200;
+  background-color: white;
+  overflow: hidden;
 
-	width: 100%;
+  width: 100%;
 
-	box-shadow: 0 4px 3px rgb(0 0 0 / 0.07), 0 2px 2px rgb(0 0 0 / 0.06);
+  box-shadow: 0 4px 3px rgb(0 0 0 / 0.07), 0 2px 2px rgb(0 0 0 / 0.06);
 
-	label {
-		position: absolute;
-		top: 0.2rem;
-		left: 2rem;
-		font-size: 80%;
-		color: lighten($color: $color-primary, $amount: 50);
-	}
+  label {
+    position: absolute;
+    top: 0.2rem;
+    left: 2rem;
+    font-size: 80%;
+    color: lighten($color: $color-primary, $amount: 50);
+  }
 
-	select {
-		padding: 2rem 0.75rem 1rem 2rem;
+  select {
+    padding: 2rem 0.75rem 1rem 2rem;
 
-		appearance: none;
-		width: 100%;
-		height: 100%;
-		background-color: transparent;
-		cursor: pointer;
-		border: none;
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
 
-		&.centered {
-			padding: 1rem 0.75rem 1rem 2rem;
-		}
-	}
+    &.centered {
+      padding: 1rem 0.75rem 1rem 2rem;
+    }
+  }
 
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		pointer-events: none;
-		background-color: transparent;
-		width: 4em;
-	}
-	&::after {
-		position: absolute;
-		content: '';
-		width: var(--size);
-		height: 0;
-		height: 0;
-		pointer-events: none;
-		box-sizing: border-box;
-		right: 2rem;
-		top: 50%;
-		transform: translate(-50%, -30%);
-		border: var(--size) solid transparent;
-		border-top: var(--size) solid $slate-400;
-		pointer-events: none;
-	}
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background-color: transparent;
+    width: 4em;
+  }
+  &::after {
+    position: absolute;
+    content: '';
+    width: var(--size);
+    height: 0;
+    height: 0;
+    pointer-events: none;
+    box-sizing: border-box;
+    right: 2rem;
+    top: 50%;
+    transform: translate(-50%, -30%);
+    border: var(--size) solid transparent;
+    border-top: var(--size) solid $slate-400;
+    pointer-events: none;
+  }
 }

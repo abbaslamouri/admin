@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['removeVariant', 'saveVariants', 'closeSlideout'])
 
-const allAttributes = inject('allAttributes')
+// const allAttributes = inject('allAttributes')
 
 const showVariantEditSlideoutKeys = ref([])
 
@@ -30,8 +30,12 @@ const getVariantAttribute = (term, j) => {
 }
 
 const openVariantEditSlideout = (i) => {
-  showVariantEditSlideoutKeys.value[i] = true
   resetActions()
+  showVariantEditSlideoutKeys.value[i] = true
+}
+
+const handleSaveVariant = (event) => {
+  // showVariantEditSlideoutKeys[index] = false
 }
 </script>
 
@@ -95,7 +99,8 @@ const openVariantEditSlideout = (i) => {
           <EcommerceProductVariantsEditSlideout
             v-if="showVariantEditSlideoutKeys[index]"
             :index="index"
-            @closeSlideout="showVariantEditSlideoutKeys[index] = false"
+            @toggleVariantEditSlideout="showVariantEditSlideoutKeys[index] = $event"
+            @saveVariant="showVariantEditSlideoutKeys[index] = false"
           />
         </td>
       </tr>

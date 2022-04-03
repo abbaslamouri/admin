@@ -8,7 +8,9 @@ const props = defineProps({
 const { product } = useStore()
 
 const getTermValue = (attributeId) => {
-  const term = product.value.variants[props.index].attrTerms.find((t) => t && t.parent && t.parent._id == attributeId)
+  console.log(attributeId)
+  console.log(product.value.variants[props.index])
+  const term = product.value.variants[props.index].attrTerms.find((t) => t && t.parent == attributeId)
   return term ? term._id : null
 }
 
@@ -34,16 +36,13 @@ const setAttributeTerm = async (termId, i) => {
     <div class="flex-col gap-2">
       <div class="flex-row gap-2">
         <div class="flex-1" v-for="(attribute, i) in product.attributes" :key="attribute.attribute._id">
-          <FormsBaseSelect
-            :options="
-              attribute.terms.map((t) => {
-                return { key: t._id, name: t.name }
-              })
-            "
-            :label="attribute.attribute.name"
-            :nullOption="`Select ${attribute.attribute.name}`"
-            @update:modelValue="setAttributeTerm($event, i)"
-          />
+          <label class="base-select">
+            <div class="label text-xs px-1">{{ attribute.attribute.name }}</div>
+            <select :value="getTermValue(attribute.attribute._id)" @change="setAttributeTerm($event.target.value, i)">
+              <option :value="null">Select Term</option>
+              <option v-for="term in attribute.terms" :key="term._id" :value="term._id">{{ term.name }}</option>
+            </select>
+          </label>
         </div>
       </div>
       <div class="enabled">

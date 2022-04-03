@@ -23,7 +23,7 @@ watch(
 </script>
 
 <template>
-  <section class="shadow-md w-full bg-white p-2 br-5" id="general-info">
+  <section class="shadow-md w-full bg-white p-2 br-5" id="stock">
     <div class="flex-row items-center justify-between text-sm mb-1">
       <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Stock</div>
       <div></div>

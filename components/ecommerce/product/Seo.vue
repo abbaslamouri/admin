@@ -1,21 +1,19 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-})
+const { product } = useStore()
 </script>
 
 <template>
-  <div class="seo shadow-md" id="seo">
-    <header class="admin-section-header">Seo</header>
-    <div class="content">
+  <section class="shadow-md w-full bg-white p-2 br-5" id="seo">
+    <div class="flex-row items-center justify-between text-sm mb-1">
+      <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Seo</div>
+      <div></div>
+    </div>
+    <div class="flex-col gap-2">
       <FormsBaseInput label="Custom Permalink" placeholder="Custom Permalink" v-model="product.permalink" />
       <FormsBaseInput label="SEO Title" placeholder="SEO Title" v-model="product.seoTitle" />
       <FormsBaseInput label="SEO Description" placeholder="SEO Description" v-model="product.seoDescription" />
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>

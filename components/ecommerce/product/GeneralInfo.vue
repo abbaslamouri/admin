@@ -1,24 +1,5 @@
 <script setup>
-const props = defineProps({
-  product: {
-    type: Object,
-  },
-})
-
-const emit = defineEmits(['updateGeneralInfo'])
-
-const generalInfo = reactive({
-  name: props.product.name,
-  productType: props.product.productType,
-})
-
-watch(
-  () => generalInfo,
-  (currentVal) => {
-    emit('updateGeneralInfo', currentVal)
-  },
-  { deep: true }
-)
+const { product } = useStore()
 </script>
 
 <template>
@@ -28,7 +9,7 @@ watch(
       <div></div>
     </div>
     <div class="flex-col gap-2">
-      <FormsBaseInput label="Name" placeholder="Name" :required="true" v-model="generalInfo.name" />
+      <FormsBaseInput label="Name" placeholder="Name" :required="true" v-model="product.name" />
       <FormsBaseSelect
         nullOption="Select Product Type"
         label="Product Type"
@@ -36,20 +17,8 @@ watch(
           { key: 'variable', name: 'Variable' },
           { key: 'simple', name: 'Simple' },
         ]"
-        v-model="generalInfo.productType"
+        v-model="product.productType"
       />
-      <!-- <FormsBaseInput label="SKU" placeholder="SKU" v-model="generalInfo.sku" />
-      <div class="flex-row gap2 items-center">
-        <div class="flex-row gap1">
-          <FormsBaseInput
-            label="Available Stock"
-            placeholder="Available Stock"
-            v-model="generalInfo.stockQty"
-            :readonly="!generalInfo.manageInventory"
-          />
-        </div>
-        <FormsBaseToggle v-model="generalInfo.manageInventory" label="Manage Inventory" />
-      </div> -->
     </div>
   </section>
 </template>

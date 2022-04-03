@@ -1,22 +1,17 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-})
+const { product } = useStore()
 </script>
 
 <template>
-  <div class="digital-delivery shadow-md" id="digital-delivery">
-    <header class="admin-section-header">
-      <div class="title">Digital Delivery</div>
-      <div class="status">
-        <FormsBaseToggle v-model="product.downloadable" label="Enable" />
-      </div>
-    </header>
-    <div class="conten" v-if="product.downloadable">file upload dropzone goes here</div>
-  </div>
+  <section class="shadow-md w-full bg-white p-2 br-5" id="digital-delivery">
+    <div class="flex-row items-center justify-between text-sm mb-1">
+      <div class="uppercase inline-block border-b-stone-300 font-bold pb-05">Digital Delivery</div>
+      <div><FormsBaseToggle v-model="product.downloadable" label="Enable" /></div>
+    </div>
+    <div class="flex-col gap-2">
+      <div class="conten" v-if="product.downloadable">file upload dropzone goes here</div>
+    </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>

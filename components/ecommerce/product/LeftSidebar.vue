@@ -11,13 +11,13 @@ defineProps({
   <ul class="">
     <li><a href="#general-info">General</a></li>
     <li><a href="#price">Price</a></li>
+    <li><a href="#stock">Stock</a></li>
     <li><a href="#image-gallery">Image Gallery</a></li>
-
-    <li><a href="#details">Details</a></li>
     <li v-if="product._id && product.productType === 'variable'"><a href="#attributes">Attributes</a></li>
     <li v-if="product._id && product.attributes.length && product.productType === 'variable'">
       <a href="#variants">Variants</a>
     </li>
+    <li><a href="#details">Details</a></li>
     <li><a href="#shipping-options">Shipping Options</a></li>
     <li><a href="#digital-delivery">Digital Delivery</a></li>
     <li><a href="#extra-fields">Extra Fields</a></li>
