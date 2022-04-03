@@ -52,7 +52,7 @@ const pages = computed(() =>
 
 const fetchAll = async () => {
   const response = await $fetchAll('products', params.value)
-  console.log(response)
+  // console.log(response)
   products.value = response.docs
   totalCount.value = response.totalCount
 }

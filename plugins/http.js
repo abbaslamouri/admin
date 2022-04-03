@@ -11,7 +11,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
       if (error.value) throw error.value
       if (data.value.status === 'fail') {
-        console.log('DATAT', data.value.message)
+        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return { docs: [], totalCount: 0 }
       }

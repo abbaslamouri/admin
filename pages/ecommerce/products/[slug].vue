@@ -21,7 +21,7 @@ let slug = route.params.slug === ' ' ? null : route.params.slug
 response = await $fetchBySlug('products', slug)
 if (Object.values(response).length) product.value = response
 else product.value = { productType: 'simple', gallery: [], attributes: [], variants: [], categories: [] }
-console.log(product.value)
+// console.log(product.value)
 
 const saveProduct = async () => {
   console.log(product.value)
@@ -47,15 +47,15 @@ const handleNewMediaSelectBtnClicked = () => {
 
 // Set category gallery
 const setImageGallery = async (media) => {
-  console.log('mediap', media)
-  console.log(product.value)
+  // console.log('mediap', media)
+  // console.log(product.value)
   for (const prop in media) {
     const index = product.value.gallery.findIndex((el) => el._id == media[prop]._id)
     if (index === -1) {
       product.value.gallery.push(media[prop])
     }
   }
-  console.log(product.value.gallery)
+  // console.log(product.value.gallery)
 }
 
 watch(
@@ -83,8 +83,6 @@ watch(
         <EcommerceProductLeftSidebar :product="product" />
       </div>
       <div class="flex-col gap-2">
-        {{ product }}
-
         <EcommerceProductGeneralInfo
           :product="product"
           @updateGeneralInfo="product.value = { ...product.value, ...$event }"

@@ -53,14 +53,14 @@ const handleDeleteProduct = (productId) => {
         <tbody>
           <tr v-for="(product, index) in products" :key="product._id">
             <td class="flex-row justify-center">
-              <!-- <div class="w-5 h-5">
+              <div class="w-5 h-5">
                 <img
                   class="w-full hfull contain"
                   v-if="product.gallery.length && product.gallery[0] && product.gallery[0].mimetype.includes('image')"
                   :src="`${product.gallery[0].path}`"
                 />
                 <img v-else class="w-full hfull contain" :src="`/placeholder.png`" />
-              </div> -->
+              </div>
             </td>
             <td>{{ product.name }}</td>
             <td class=" ">{{ product.Qty }}</td>
