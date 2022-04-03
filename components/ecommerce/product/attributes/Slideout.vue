@@ -1,32 +1,14 @@
 <script setup>
-const props = defineProps({
-  // product: {
-  //   type: Object,
-  // },
-})
-const emit = defineEmits(['saveAttributes', 'closeSlideout', 'updateAttributes'])
+const emit = defineEmits(['saveAttributes', 'closeAttributesSlideout', 'updateAttributes', 'closeAttributesSlideout'])
+
 const { $fetchAll } = useNuxtApp()
-
 const { product } = useStore()
-// const { errorMsg, alert } = useFactory()
 const { errorMsg, alert } = useAppState()
-// const product.value.attributes([...props.product.attributes])
-
 const attributeToDelteIndex = ref(null)
 const attributeIndex = ref(null)
 const termToDeleteId = ref(null)
-const termsToDeleteAttrId = ref(null)
 
 const { docs: allAttributes } = await $fetchAll('attributes', { fields: 'name,slug' })
-// const { docs: allAttributeTerms } = await $fetchAll('attributeterms')
-// const { data, pending, error } = await useFetch(`${config.API_URL}/attributeterms`, {})
-// console.log(allAttributes)
-
-// const allAttributes = (await $fetch(`/api/v1/attributes`, { fields: 'name, slug' })).docs
-// const allAttributeTerms = (await $fetch(`/api/v1/attributeterms`, { fields: 'name, slug, parent' })).docs
-
-// console.log(currentProduct)
-
 const current = JSON.stringify(product.value.attributes)
 
 const removeVariantByTermId = (termId) => {
@@ -45,7 +27,6 @@ const removeVariantByTermId = (termId) => {
 const insertEmptyAttribute = (attribute = {}, defaultTerm = {}, terms = []) => {
   if (product.value.attributes.length == allAttributes.length)
     return (errorMsg.value = 'You have used up all available attributes')
-  console.log('here')
   product.value.attributes.push({
     attribute,
     terms,
@@ -81,32 +62,22 @@ const closeSlideout = () => {
     showAlert(
       'You have unsaved changes',
       'Please save your changes before closing this window or click cancel to exit without saving.',
-      'closeSlideout',
+      'closeAttributesSlideout',
       false
     )
   } else {
-    emit('closeSlideout')
+    emit('closeAttributesSlideout')
   }
-}
-
-const showDeleteAllAttributesAlert = () => {
-  showAlert(
-    'Are you sure you want to delete all attributes',
-    'You also have to delete all product variants associated with this attribute.',
-    'deleteAllAttributes',
-    true
-  )
 }
 
 const saveAttributes = async () => {
   if (current == JSON.stringify(product.value.attributes)) return emit('closeSlideout')
-
   const newAttributes = []
   for (const prop in product.value.attributes) {
     if (!product.value.attributes[prop].attribute._id)
       return (errorMsg.value = `Please select a value for attribute ${prop * 1 + 1} `)
     if (!product.value.attributes[prop].terms.length)
-      return (errorMsg.value = `Attributes must contain at least one term.  Please select a value for attribute ${
+      return (errorMsg.value = `Attributes must contain at least one term.  Please select terms for attribute ${
         prop * 1 + 1
       }`)
 
@@ -114,18 +85,12 @@ const saveAttributes = async () => {
   }
   product.value.attributes = newAttributes
   emit('saveAttributes')
-  emit('closeSlideout')
+  emit('closeAttributesSlideout')
 }
 
 const cancelAttributesUpdate = () => {
   product.value.attributes = JSON.parse(current)
-  emit('closeSlideout')
-}
-
-const deleteAllAttributes = () => {
-  product.value.attributes = []
-  alert.value.show = false
-  alert.value.action = ''
+  emit('closeAttributesSlideout')
 }
 
 const showDeleteAttributeAlert = (attributeIndex) => {
@@ -140,6 +105,20 @@ const showDeleteAttributeAlert = (attributeIndex) => {
 
 const deleteAttribute = () => {
   product.value.attributes.splice(attributeToDelteIndex.value, 1)
+  alert.value.show = false
+  alert.value.action = ''
+}
+
+const showDeleteAllAttributesAlert = () => {
+  showAlert(
+    'Are you sure you want to delete all attributes',
+    'You also have to delete all product variants associated with this attribute.',
+    'deleteAllAttributes',
+    true
+  )
+}
+const deleteAllAttributes = () => {
+  product.value.attributes = []
   alert.value.show = false
   alert.value.action = ''
 }
@@ -185,18 +164,11 @@ const deleteTerm = async () => {
   attributeIndex.value = ''
   termToDeleteId.value = null
 
-  // for (const prop in product.value.attributes) {
-  //   const i = product.value.attributes[prop].terms.findIndex((t) => t._id == termToDeleteId.value)
-  //   if (i !== -1) product.value.attributes[prop].terms.splice(i, 1)
+  // for (const prop in product.value.variants) {
+  //   const term = product.value.variants[prop].attrTerms.find((t) => t._id == termToDeleteId.value)
+  //   if (term) product.value.variants[prop].toDelete = true
   // }
-  for (const prop in product.value.variants) {
-    const term = product.value.variants[prop].attrTerms.find((t) => t._id == termToDeleteId.value)
-    if (term) product.value.variants[prop].toDelete = true
-  }
-  product.value.variants = product.value.variants.filter((v) => !v.toDelete)
-  // termToDeleteId.value = null
-  // alert.value.show = false
-  // alert.value.action = ''
+  // product.value.variants = product.value.variants.filter((v) => !v.toDelete)
 }
 
 const showDeleteAllTermsAlert = (payload) => {
@@ -229,42 +201,46 @@ const showAlert = (heading, paragraph, action, showCancelBtn) => {
 watch(
   () => alert.value.show,
   (currentVal) => {
-    if (currentVal === 'ok' && alert.value.action === 'closeSlideout') alert.value = false
+    if (currentVal === 'ok' && alert.value.action === 'closeAttributesSlideout') {
+      alert.value.show = false
+      alert.value.action = ''
+    }
     if (currentVal === 'ok' && alert.value.action === 'deleteAttribute') deleteAttribute()
-    if (currentVal === 'ok' && alert.value.action === 'AllAttributes') deleteAllAttributes()
+    if (currentVal === 'ok' && alert.value.action === 'deleteAllAttributes') deleteAllAttributes()
     if (currentVal === 'ok' && alert.value.action === 'deleteTerm') deleteTerm()
     if (currentVal === 'ok' && alert.value.action === 'deleteAllTerms') deleteAllTerms()
   }
-  // { deep: true }
 )
 </script>
 
-<!-- <template> -->
-<!-- <Slideout class="attributes" @closeSlideout="closeSlideout">
-    <template v-slot:header>
-      <h3>Edit Attributes</h3>
-    </template> -->
 <template>
-  <!-- <Slideout>
-    <template v-slot:header>
-      <h3>Edit Attributes</h3>
-    </template>
-  </Slideout> -->
-  <div class="">
-    <div class="fixed inset-0 w-100vw h-100vh z-9 bg-slate-400 opacity-90"></div>
-    <div class="fixed top-0 right-0 h-100vh z-99 max-w-100">
-      <div class="h-100vh flex-col justify-between gap-2 bg-slate-200">
-        <div>
-          <h3 class="bg-slate-300 p-1 flex-row">Edit Attributes</h3>
-          <button><IconsClose /></button>
+  <div>
+    <div class="fixed inset-0 w-100vw h-100vh z-9 bg-slate-900 opacity-70"></div>
+    <div class="fixed top-0 right-0 h-100vh z-99 max-w-100 w-100-percent">
+      <div class="h-100vh flex-col justify-between bg-slate-200">
+        <div class="bg-slate-400 p-1 flex-row items-center justify-between py-1 px-2">
+          <h3 class="font-bold text-lg">Edit Attributes</h3>
+          <button class="btn btn__close" @click.prevent="closeSlideout"><IconsClose /></button>
         </div>
-        <div class="flex-1 border-red">
-          <div class="flex-row items-center justify-between bg-slate-200 p-2">
+        <div class="flex-1 p-2 flex-col gap-2 ">
+          <div class="flex-row items-center justify-between bg-white p-2 br-3 shadow-md">
             <h2>Attributes</h2>
-            <div class="flex-row gap2">
-              <button class="btn btn__primary py-05 px-2 text-xs" @click="insertEmptyAttribute()">Add Attribute</button>
-              <button class="btn btn__primary py-05 px-2 text-xs" @click="addAllAttributes">Add All Attributes</button>
-              <button class="btn btn__secondary py-05 px-2 text-xs" @click="showDeleteAllAttributesAlert">
+            <div class="flex-row gap-2">
+              <button class="btn btn__primary py-05 px-2 text-xs" @click.prevent="insertEmptyAttribute()">
+                Add Attribute
+              </button>
+              <button
+                class="btn btn__primary py-05 px-2 text-xs"
+                @click.prevent="addAllAttributes"
+                v-if="product.attributes.length !== allAttributes.length"
+              >
+                Add All Attributes
+              </button>
+              <button
+                class="btn btn__secondary py-05 px-2 text-xs"
+                v-if="product.attributes.length"
+                @click.prevent="showDeleteAllAttributesAlert"
+              >
                 deleted All Attributes
               </button>
             </div>
@@ -283,11 +259,11 @@ watch(
             />
           </div>
         </div>
-        <div class="flex-row items-center justify-end gap2">
-          <button class="btn btn_secondary py05 px3" @click.prevent="cancelAttributesUpdate">Cancel</button>
+        <div class="flex-row items-center justify-end gap-2 p-1 bg-slate-400">
+          <button class="btn btn_secondary py-05 px-3" @click.prevent="cancelAttributesUpdate">Cancel</button>
           <button
-            class="btn btn__primary py05 px3"
-            :class="{ disabled: current == JSON.stringify(product.attributes) }"
+            class="btn btn__primary py-05 px-3"
+            :disabled="current == JSON.stringify(product.attributes)"
             @click.prevent="saveAttributes"
           >
             Save Changes
@@ -297,19 +273,5 @@ watch(
     </div>
   </div>
 </template>
-<!-- <template v-slot:footer>
-      <div class="flex-row items-center justify-end gap2">
-        <button class="btn btn_secondary py05 px3" @click.prevent="cancelAttributesUpdate">Cancel</button>
-        <button
-          class="btn btn__primary py05 px3"
-          :class="{ disabled: current == JSON.stringify(product.attributes) }"
-          @click.prevent="saveAttributes"
-        >
-          Save Changes
-        </button>
-      </div>
-    </template>
-  </Slideout> -->
-<!-- </template> -->
 
 <style lang="scss" scoped></style>

@@ -30,7 +30,7 @@ const deleteAttribute = (attributeIndex) => {
 <template>
   <table class="text-xs shadow-md">
     <thead>
-      <tr class="bg-slate-200">
+      <tr class="bg-slate-200 border border-b-stone-400 bg-stone-300">
         <th>ID</th>
         <th class="">Attribute</th>
         <th>Enable</th>
@@ -41,9 +41,9 @@ const deleteAttribute = (attributeIndex) => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(attribute, index) in product.attributes" :key="`attribute-${index}`">
+      <tr class="border border-b-stone-400" v-for="(attribute, index) in product.attributes" :key="`attribute-${index}`">
         <td>
-          <div class="bg-slate-200 p1 br3">{{ index + 1 }}</div>
+          <div class="bg-slate-200 p-1 br-3 ">{{ index + 1 }}</div>
         </td>
         <td>
           <EcommerceProductAttributesAttribute :attributeIndex="index" :allAttributes="allAttributes" />

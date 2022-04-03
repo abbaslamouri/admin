@@ -2,92 +2,46 @@
 defineProps({
   outerBoxWidth: {
     type: Number,
-    default: 50,
+    default: 75,
   },
   outerBoxHeight: {
     type: Number,
     default: 40,
   },
   showOkBtn: {
-    type:Boolean,
-    default: true
+    type: Boolean,
+    default: true,
   },
   showCancelBtn: {
-    type:Boolean,
-    default: true
-  }
-  
+    type: Boolean,
+    default: true,
+  },
 })
 
 defineEmits(['cancel', 'ok'])
 </script>
 
 <template>
-  <div class="alert text-sm">
-    <div class="overlay"></div>
-    <div class="wrapper" @click.self="$emit('cancel')">
-      <div class="content" :style="{ width: `${outerBoxWidth}%`, 'min-height': `${outerBoxHeight}%` }">
-        <header><IconsError /></header>
-        <main>
+  <div class="text-sm">
+    <div class="bg-slate-900 fixed w-100vw h-100vh inset-0 z-99 opacity-80"></div>
+    <div class="w-100vw h-100vh z-999 fixed inset-0 flex-row items-center justify-center" @click.self="$emit('cancel')">
+      <div
+        class="fixed flex-col gap-2 items-center justify-center p-2 bg-stone-200 br-5 shadow-md oveflow-auto"
+        :style="{ width: `${outerBoxWidth}%`, 'min-height': `${outerBoxHeight}%` }"
+      >
+        <header><IconsError class="w-10 h-10 fill-yellow-500" /></header>
+        <main class="flex-col items-center gap-2 p-2">
           <slot></slot>
         </main>
-        <footer>
-          <button class="btn btn-secondary" @click.prevent="$emit('cancel')" v-if="showCancelBtn">Cancel</button>
-          <button class="btn btn-primary" @click.prevent="$emit('ok')" v-if="showOkBtn">OK</button>
+        <footer class="flex-row items-center gap-1">
+          <button class="btn btn__secondary px-2 py-1" @click.prevent="$emit('cancel')" v-if="showCancelBtn">
+            Cancel
+          </button>
+          <button class="btn btn__primary px-2 py-1" @click.prevent="$emit('ok')" v-if="showOkBtn">OK</button>
         </footer>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import '@/assets/scss/variables';
-
-.alert {
-  .wrapper {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-    z-index: 999999;
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      padding: 4rem;
-      background-color: white;
-      border-radius: 5px;
-      overflow: auto;
-      text-align: center;
-      line-height: 2.5rem;
-      letter-spacing: 0.1rem;
-      // font-size: 1.5rem;
-
-      footer {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .btn {
-        padding: 1rem 3rem;
-        border-radius: 5px;
-        border: 1px solid $slate-300;
-        font-size: 1.3rem;
-        letter-spacing: 0.15rem;
-      }
-
-      svg {
-        width: 10rem;
-        height: 10rem;
-        fill: $yellow-400;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

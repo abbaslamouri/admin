@@ -1,15 +1,11 @@
 <script setup>
 defineProps({
-  // product: {
-  //   type: Object,
-  // },
   allAttributes: {
     type: Array,
   },
 })
 const { product } = useStore()
 
-// defineEmits(['slideoutEventEmitted'])
 </script>
 
 <template>

@@ -52,18 +52,22 @@ export default defineNuxtPlugin((nuxtApp) => {
     errorMsg.value = null
     message.value = null
     let response = null
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
     try {
       if (doc._id) {
         response = await useFetch(`${config.API_URL}/${resource}/${id}`, {
           method: 'PATCH',
           body: doc,
-          headers: { Authorization: `Bearer ${useCookie('auth').value.token}` },
+          headers: { Authorization: `Bearer ${token}` },
         })
       } else {
         response = await useFetch(`${config.API_URL}/${resource}`, {
           method: 'POST',
           body: doc,
-          headers: { Authorization: `Bearer ${useCookie('auth').value.token}` },
+          headers: { Authorization: `Bearer ${token}` },
         })
       }
       console.log(response.data.value)

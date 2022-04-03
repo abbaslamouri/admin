@@ -31,7 +31,10 @@ const signin = async () => {
     })
     if (error.value) throw error.value
     console.log('data', data.value)
-    const auth = useCookie('auth')
+    const auth = useCookie('auth', {
+      expires: new Date(Date.now() + config.COOKIE_EXPIRES_IN * 24 * 3600 * 1000),
+      path: '/',
+    })
     auth.value = data.value.auth
     user.value = data.value.auth.user
     token.value = data.value.auth.token

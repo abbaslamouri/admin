@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     BASE_URL: process.env.BASE_URL,
     API_BASE: process.env.API_BASE,
     API_URL: process.env.API_URL,
+    COOKIE_EXPIRES_IN: process.env.COOKIE_EXPIRES_IN,
   },
 
   // privateRuntimeConfig: {

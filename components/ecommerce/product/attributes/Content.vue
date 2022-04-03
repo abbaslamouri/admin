@@ -1,9 +1,6 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-  },
-})
+const { product } = useStore()
+
 defineEmits(['showAttributesSlideout'])
 </script>
 
@@ -28,7 +25,7 @@ defineEmits(['showAttributesSlideout'])
             <p class="attribute-name">{{ attribute.attribute.name }}:</p>
             <div class="terms flex-1 flex-row gap-1">
               <div
-                class="term bg-slate-500 py-02 px1 text-slate-50 br-5"
+                class="term bg-slate-500 py-02 px-1 text-slate-50 br-5"
                 v-for="term in attribute.terms"
                 :key="term._id"
               >

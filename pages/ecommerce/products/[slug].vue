@@ -13,7 +13,7 @@ const route = useRoute()
 const router = useRouter()
 const { $fetchBySlug, $saveDoc } = useNuxtApp()
 const showAttributesSlideout = ref(false)
-// const showVariantsSlideout = ref(false)
+const showVariantsSlideout = ref(false)
 let response = null
 const galleryIntro = ref('This image gallery contains all images associated with this product including its variants.')
 const slug = route.params.slug === ' ' ? null : route.params.slug
@@ -166,25 +166,23 @@ watch(
 
         <EcommerceProductAttributesContent
           v-if="product._id && product.productType === 'variable'"
-          :product="product"
           @showAttributesSlideout="showAttributesSlideout = $event"
         />
         <EcommerceProductAttributesSlideout
-          v-if="!showAttributesSlideout"
-          :product="product"
-          @closeSlideout="showAttributesSlideout = false"
+          v-if="showAttributesSlideout"
+          @closeAttributesSlideout="showAttributesSlideout = false"
           @saveAttributes="saveProduct"
         />
 
-        <!-- <EcommerceAdminProductsVariantsContent
+        <EcommerceProductVariantsContent
           @showVariantsSlideout="showVariantsSlideout = $event"
           v-if="product._id && product.productType === 'variable' && product.attributes.length"
-        /> -->
-        <!-- <EcommerceAdminProductsVariantsSlideout
+        />
+        <EcommerceProductVariantsSlideout
           v-if="showVariantsSlideout"
           @closeSlideout="showVariantsSlideout = false"
           @saveVariants="saveProduct"
-        /> -->
+        />
         <EcommerceProductDetails :product="product" @updateDetails="product.value = { ...product.value, ...$event }" />
 
         <!-- <EcommerceAdminProductShippingOptions :product="product" /> -->
