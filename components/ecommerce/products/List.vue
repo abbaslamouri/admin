@@ -27,7 +27,7 @@ const setActions = (payload) => {
 }
 const handleEditProduct = (slug) => {
   resetActions()
-  router.push({ name: 'index', params: { slug } })
+  router.push({ name: 'ecommerce-products-slug', params: { slug } })
 }
 
 const handleDeleteProduct = (productId) => {
@@ -44,6 +44,8 @@ const handleDeleteProduct = (productId) => {
           <tr class="bg-slate-200">
             <th>Image</th>
             <th>Product</th>
+            <th>Price</th>
+            <th>Sale Price</th>
             <th>Stock Qty.</th>
             <th>Orders</th>
             <th>Sales</th>
@@ -63,7 +65,9 @@ const handleDeleteProduct = (productId) => {
               </div>
             </td>
             <td>{{ product.name }}</td>
-            <td class=" ">{{ product.Qty }}</td>
+            <td class=" ">{{ product.price }}</td>
+            <td class=" ">{{ product.salePrice }}</td>
+            <td class=" ">{{ product.stockQty }}</td>
             <td class=" ">{{ product.orders }}</td>
             <td class=" ">{{ product.sales }}</td>
             <td class="minw12">

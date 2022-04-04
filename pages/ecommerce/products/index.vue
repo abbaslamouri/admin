@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 // const { fetchAll, deleteById } = useFactory()
-const { $fetchAll } = useNuxtApp()
+const { $fetchAll, $deleteDoc } = useNuxtApp()
 const config = useRuntimeConfig()
 const { errorMsg, message, alert } = useAppState()
 
@@ -94,11 +94,12 @@ const showDeleteProductAlert = (productId) => {
   productToDeleteId.value = productId
   showAlert('Are you sure you want to delete this product?', '', 'deleteProduct', true)
 }
+
 const deleteProduct = async () => {
-  const product = products.value.find((p) => p._id == productToDeleteId.value)
-  if (!product) return (errorMsg.value = `We are not able to find a product with this ID: ${productToDeleteId.value} `)
-  console.log(product)
-  await $myFetch('products', {}, 'DELETE', productToDeleteId.value)
+  // const product = products.value.find((p) => p._id == productToDeleteId.value)
+  // if (!product) return (errorMsg.value = `We are not able to find a product with this ID: ${productToDeleteId.value} `)
+  const response = await $deleteDoc('products', productToDeleteId.value)
+  if (!response) message.value = 'We were unable to delete this product'
 
   // response = await deleteById('products', product._id)
   // if (!response) return

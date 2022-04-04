@@ -1,26 +1,5 @@
 <script setup>
-const props = defineProps({
-  product: {
-    type: Object,
-  },
-})
-
-const emit = defineEmits(['updateDetails'])
-
-const details = reactive({
-  excerpt: props.product.excerpt,
-  description: props.product.description,
-  intensity: props.product.intensity,
-  roastiness: props.product.roastiness,
-})
-
-watch(
-  () => details,
-  (currentVal) => {
-    emit('updateDetails', currentVal)
-  },
-  { deep: true }
-)
+const { product } = useStore()
 </script>
 
 <template>
@@ -30,14 +9,14 @@ watch(
       <div></div>
     </div>
     <div class="flex-col gap-2">
-      <FormsBaseTextarea v-model="details.excerpt" label="Excerpt" placeholder="Excerpt" rows="2" />
-      <FormsBaseTextarea v-model="details.description" label="Description" placeholder="Description" rows="4" />
+      <FormsBaseTextarea v-model="product.excerpt" label="Excerpt" placeholder="Excerpt" rows="2" />
+      <FormsBaseTextarea v-model="product.description" label="Description" placeholder="Description" rows="4" />
       <div class="flex-row gap-2">
         <div>
-          <FormsBaseInput type="number" label="Intensity" placeholder="Intensity" v-model="details.intensity" />
+          <FormsBaseInput type="number" label="Intensity" placeholder="Intensity" v-model="product.intensity" />
         </div>
         <div class="flex-1">
-          <FormsBaseInput label="Roastiness" placeholder="Roastiness" v-model="details.roastiness" />
+          <FormsBaseInput label="Roastiness" placeholder="Roastiness" v-model="product.roastiness" />
         </div>
       </div>
     </div>

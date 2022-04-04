@@ -11,7 +11,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
       if (error.value) throw error.value
       if (data.value.status === 'fail') {
-        // console.log('DATAT', data.value.message)
         if (process.client) errorMsg.value = data.value.message
         return { docs: [], totalCount: 0 }
       }
@@ -88,6 +87,35 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   }
 
+  const deleteDoc = async (resource, id) => {
+    errorMsg.value = null
+    message.value = null
+    const token =
+      useCookie('auth') && useCookie('auth').value && useCookie('auth').value.token
+        ? useCookie('auth').value.token
+        : null
+    try {
+      const { data, pending, error } = await useFetch(`${config.API_URL}/${resource}/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      console.log('DELETE DOC', data.value)
+      if (error.value) throw error.value
+      if (data.value.status === 'fail') {
+        console.log('DATAT', data.value.message)
+        if (process.client) errorMsg.value = data.value.message
+        return null
+      }
+      return true
+    } catch (err) {
+      if (process.client) {
+        console.log('MYERROR', err)
+        errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+      }
+      return null
+    }
+  }
+
   const deleteDocs = async (resource, docs) => {
     errorMsg.value = null
     message.value = null
@@ -124,6 +152,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       fetchBySlug: (resource, slug) => fetchBySlug(resource, slug),
       saveDoc: (resource, doc, id) => saveDoc(resource, doc, id),
       fetchAll: (resource, params) => fetchAll(resource, params),
+      deleteDoc: (resource, id) => deleteDoc(resource, id),
       deleteDocs: (resource, docs) => deleteDocs(resource, docs),
     },
   }

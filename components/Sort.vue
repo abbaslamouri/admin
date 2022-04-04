@@ -12,8 +12,8 @@ const props = defineProps({
 const emit = defineEmits(['toggleSort'])
 
 const currentSort = reactive({
-  field: props.sortOptions[0].key,
-  order: '',
+  field: props.sort.field,
+  order: props.sort.order,
 })
 
 watch(

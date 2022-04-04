@@ -20,26 +20,24 @@ const ulploadItems = ref([])
 const folderFields = 'name, slug, path'
 const mediaFields = 'name, slug, folder, path, url, mimetype'
 
-console.log('KKKKKK')
-
 const folderSort = reactive({
-  field: 'sortOrder',
+  field: 'name',
   order: '',
 })
 const folderSortOptions = [
   { key: 'sortOrder', name: 'Order' },
   { key: 'name', name: 'name' },
-  { key: 'createAt', name: 'Date Created' },
+  { key: 'createdAt', name: 'Date Created' },
 ]
 
 const mediaSort = reactive({
-  field: 'sortOrder',
-  order: '',
+  field: 'createdAt',
+  order: '-',
 })
 const mediaSortOptions = [
   { key: 'sortOrder', name: 'Order' },
   { key: 'name', name: 'name' },
-  { key: 'createAt', name: 'Date Created' },
+  { key: 'createdAt', name: 'Date Created' },
 ]
 
 const folderParams = computed(() => {
@@ -255,18 +253,15 @@ const handleMoveMediaToFolder = async (folderId) => {
   )
 
   selectedFolder.value = folder
-  // console.log('XXXX', selectedFolder.value)
   selectedMedia.value = []
   await fetchMedia()
 }
 
 const showMediaDeleteAlert = async () => {
-  // folderToDelete.value = props.selectedFolder
   showAlert('Are you sure you want to delete these files?', '', 'deleteMedia', true)
 }
 
 const handleSearch = async (searchKeyword) => {
-  console.log('MMMMM', searchKeyword)
   page.value = 1
   keyword.value = searchKeyword
   await fetchMedia()
@@ -307,14 +302,12 @@ const deleteFolder = async () => {
     })
     if (error.value) throw error.value
     console.log(data.value)
-    // emit('folderDeleted')
     const index = folders.value.findIndex((f) => f._id == selectedFolder.value._id)
     if (index !== -1) folders.value.splice(index, 1)
     selectedFolder.value = {}
     message.value = `Folder ${selectedFolder.value.name} deleted succesfully`
   } catch (err) {
     console.log(err)
-    // errorMsg.value = err.data.message
   }
 }
 
@@ -333,7 +326,6 @@ watch(
     if (currentVal === 'ok' && alert.value.action === 'deleteFolder') deleteFolder()
   }
 )
-console.log('GGGGGGGGG')
 await fetchFolders()
 await fetchMedia()
 </script>
@@ -347,6 +339,7 @@ await fetchMedia()
           <MediaFolderActions
             :selectedFolder="selectedFolder"
             :media="media"
+            :sort="folderSort"
             :sortOptions="folderSortOptions"
             @toggleSort="toggleFolderSort"
             @folderSaved="handleFolderSaved"
@@ -367,6 +360,7 @@ await fetchMedia()
           :folders="folders"
           :selectedMedia="selectedMedia"
           :selectedFolder="selectedFolder"
+          :sort="mediaSort"
           :sortOptions="mediaSortOptions"
           @toggleSort="toggleMediaSort"
           @fileUploadBtnClicked="handleFileUploadBtnClicked"

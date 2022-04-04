@@ -28,6 +28,14 @@
   z-index: 9999;
 }
 
+.z-99999 {
+  z-index: 99999;
+}
+
+.z-999999 {
+  z-index: 999999;
+}
+
 .relative {
   position: relative;
 }
@@ -46,6 +54,10 @@
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.sticky {
+  position: sticky;
 }
 
 .inset-0 {
@@ -82,6 +94,10 @@
 
 .top-50-per {
   top: 50%;
+}
+
+.bottom-4 {
+  bottom: 4rem;
 }
 
 .left-50-per {

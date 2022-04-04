@@ -1,10 +1,5 @@
 <script setup>
-defineProps({
-  product: {
-    type: Object,
-  },
-})
-// const { product } = useStore()
+const { product } = useStore()
 </script>
 
 <template>

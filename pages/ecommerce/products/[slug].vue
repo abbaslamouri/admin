@@ -150,7 +150,7 @@ watch(
         <EcommerceProductRightSidebar @productStatusUpdated="product.status = $event" @saveProduct="saveProduct" />
       </div>
     </main>
-    <div class="w-full flex-row justify-end px-4">
+    <div class="w-full flex-row justify-end px-4 sticky bottom-4 go-to-top">
       <a href="#product-go-back" class="btn btn__secondary px-2 py-1">Go To Top</a>
     </div>
     <footer class="w-full max-width-130 bg-slate-300 px-2 py-1 br-5 flex-row justify-center text-2xl">Footer</footer>
@@ -183,4 +183,9 @@ watch(
     gap: 2rem;
   }
 }
+
+// .go-to-top {
+//   position: sticky;
+//   bottom: 4rem;
+// }
 </style>

@@ -23,8 +23,8 @@ defineEmits(['cancel', 'ok'])
 
 <template>
   <div class="text-sm">
-    <div class="bg-slate-900 fixed w-100vw h-100vh inset-0 z-99 opacity-80"></div>
-    <div class="w-100vw h-100vh z-999 fixed inset-0 flex-row items-center justify-center" @click.self="$emit('cancel')">
+    <div class="bg-slate-900 fixed w-100vw h-100vh inset-0 z-999999 opacity-80"></div>
+    <div class="w-100vw h-100vh z-999999 fixed inset-0 flex-row items-center justify-center" @click.self="$emit('cancel')">
       <div
         class="fixed flex-col gap-2 items-center justify-center p-2 bg-stone-200 br-5 shadow-md oveflow-auto"
         :style="{ width: `${outerBoxWidth}%`, 'min-height': `${outerBoxHeight}%` }"
