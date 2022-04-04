@@ -27,7 +27,7 @@ const setActions = (payload) => {
 }
 const handleEditProduct = (slug) => {
   resetActions()
-  router.push({ name: 'ecommerce-products-slug', params: { slug } })
+  router.push({ name: 'index', params: { slug } })
 }
 
 const handleDeleteProduct = (productId) => {
@@ -75,7 +75,7 @@ const handleDeleteProduct = (productId) => {
                 @editAction="handleEditProduct(product.slug)"
               />
               <!-- <div class="menu shadow-md p1 border border-stone-300 font-bold" v-if="showActionsKeys">
-                <NuxtLink class="link" :to="{ name: 'admin-ecommerce-products-slug', params: { slug: product.slug } }">
+                <NuxtLink class="link" :to="{ name: 'index', params: { slug: product.slug } }">
                   Edit
                 </NuxtLink>
                 <a href="#" class="text-red-700" @click.prevent="showAlert = true">Delete</a>
