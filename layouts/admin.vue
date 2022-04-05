@@ -4,8 +4,8 @@ const showAdminSidebar = ref(true)
 
 const checkScreen = () => {
   if (process.client) {
-    if (window.innerWidth < 768) showAdminSidebar.value = false
-    if (window.innerWidth >= 768) showAdminSidebar.value = true
+    if (window.innerWidth < 1500) showAdminSidebar.value = false
+    if (window.innerWidth >= 1500) showAdminSidebar.value = true
   }
 }
 

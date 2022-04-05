@@ -25,7 +25,7 @@ const completeSignup = async () => {
   if (error.value) errorMsg.value = error.value.data.message
   else message.value = data.value.message
 
-  const auth = useCookie('auth')
+  // const auth = useCookie('auth')
   auth.value = data.value.auth
 
   console.log(error.value ? error.value.data : '')

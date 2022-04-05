@@ -9,12 +9,12 @@ defineProps({
   selectedFolder: {
     type: Object,
   },
-  mediaSortField: {
-    type: String,
+  sort: {
+    type: Object,
   },
-  mediaSortOrder: {
-    type: String,
-  },
+  // mediaSortOrder: {
+  //   type: String,
+  // },
   sortOptions: {
     type: Array,
     required: true,
@@ -49,7 +49,7 @@ const handleMoveMedia = async () => {
         <span>Upload Files</span>
       </button>
       <div class="">
-        <Sort :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
+        <Sort :sort="sort" :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
       </div>
       <div class="flex-row items-center gap-2 min-w-60">
         <div class="min-w-20" v-if="selectedMedia.length">

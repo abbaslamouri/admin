@@ -6,20 +6,17 @@
 		layout: 'admin',
 	})
 
-	// const { fetchAll } = useFactory()
 	const config = useRuntimeConfig()
-	const { errorMsg, message } = useAppState()
-
+	const { errorMsg, message, alert } = useAppState()
+	const { $fetchAll } = useNuxtApp()
 	const showActionKeys = ref([])
 	const attributes = ref([])
-	const attributeTerms = ref([])
-	// const count = ref(null) // item count taking into account params
+	const termToDeleteId = ref('')
+	const attributeToDeleteId = ref('')
 	const totalCount = ref(null) // Total item count in the database
 	const keyword = ref(null)
 	const page = ref(1)
-	const perPage = ref(10)
-	const sortField = ref('createdAt')
-	const sortOrder = ref('')
+	const perPage = ref(3)
 	const sort = reactive({
 		field: 'sortOrder',
 		order: '',
@@ -34,7 +31,7 @@
 
 	const params = computed(() => {
 		const params = {
-			// fields,
+			fields,
 			page: page.value,
 			limit: perPage.value,
 			sort: `${sort.order}${sort.field}`,
@@ -51,53 +48,11 @@
 	)
 
 	const fetchAll = async () => {
-		errorMsg.value = null
-		message.value = null
-		try {
-			const { data, pending, error } = await useFetch(`${config.API_URL}/attributes/`, {
-				params: params.value,
-			})
-			if (error.value) throw error.value
-			console.log('DATA', data.value)
-			attributes.value = data.value.docs
-			totalCount.value = data.value.totalCount
-		} catch (err) {
-			console.log(err)
-		}
+		const response = await $fetchAll('attributes', params.value)
+		attributes.value = response.docs
+		totalCount.value = response.totalCount
+		console.log(attributes.value)
 	}
-
-	// // Attributes query params
-	// const attributeParams = computed(() => {
-	//   return {
-	//     fields: 'name, slug',
-	//     page: page.value,
-	//     limit: perPage.value,
-	//     sort: `${sortOrder.value}${sortField.value}`,
-	//     keyword: keyword.value,
-	//   }
-	// })
-
-	// const fetchAll = async () => {
-	//   response = await fetchAll('attributes', attributeParams.value)
-	//   if (response.ok && response.ok == false) {
-	//     errorMsg.value = response.errorMsg
-	//     attributes.value = []
-	//   } else {
-	//     attributes.value = response.docs
-	//     count.value = response.count
-	//     totalCount.value = response.totalCount
-	//     response = await fetchAll('attributeterms', {
-	//       fields: 'name, slug, parent',
-	//     })
-	//     if (response.ok && response.ok == false) {
-	//       errorMsg.value = response.errorMsg
-	//       attributeTerms.value = []
-	//     } else {
-	//       attributeTerms.value = response.docs
-	//     }
-	//   }
-	// }
-	// await fetchAll()
 
 	const resetActions = () => {
 		for (const prop in attributes.value) {
@@ -128,6 +83,100 @@
 		await fetchAll()
 	}
 
+	const addNewAttribute = () => {
+		attributes.value.push({ name: '', sortOrder: 0, terms: [] })
+		totalCount.value++
+	}
+
+	const showDeleteAttributeAlert = (attributeId) => {
+		attributeToDeleteId.value = attributeId
+		console.log(attributeToDeleteId.value)
+		showAlert(
+			'Are you sure you want to delete this attribute?',
+			'You must also delete all product variants containing this attribute if any',
+			'deleteAttribute',
+			true
+		)
+	}
+
+	const deleteAttribute = async () => {
+		// errorMsg.value = ''
+		// message.value = ''
+		try {
+			console.log('LLLLLLLL')
+			await $fetchAll('attributes', {}, 'DELETE', attributeToDeleteId.value)
+
+			// const {
+			//   data: attributeData,
+			//   pending: attributePending,
+			//   error: attributeError,
+			// } = await useFetch(`${config.API_URL}/attributes/${attributeToDeleteId.value}`, {
+			//   method: 'DELETE',
+			// })
+			// if (attributeError.value) throw attributeError.value
+			const {
+				data: attributeTermsData,
+				pending: attributeTermsPending,
+				error: attributeTermsError,
+			} = await useFetch(`${config.API_URL}/attributeterms/deleteMany`, {
+				method: 'DELETE',
+				body: { parent: attributeToDeleteId.value },
+			})
+			if (attributeTermsError.value) throw attributeTermsError.value
+		} catch (err) {
+			console.log(err)
+			errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+		}
+		alert.value.action = ''
+		alert.value.show = false
+		fetchAll()
+	}
+
+	const showDeleteTermAlert = (termId) => {
+		termToDeleteId.value = termId
+		showAlert(
+			'Are you sure you want to delete this attribute term?',
+			'You must also delete all variants containig this term',
+			'deleteTerm',
+			true
+		)
+	}
+
+	const deleteTerm = async () => {
+		errorMsg.value = ''
+		message.value = ''
+		try {
+			const { data, pending, error } = await useFetch(`${config.API_URL}/attributeterms/${termToDeleteId.value}`, {
+				method: 'DELETE',
+			})
+			if (error.value) throw error.value
+		} catch (err) {
+			console.log(err)
+			errorMsg.value = err.message ? err.message : err.data && err.data.message ? err.data.message : ''
+		}
+		termToDeleteId.value = ''
+		alert.value.action = ''
+		alert.value.show = false
+		fetchAll()
+	}
+
+	const showAlert = (heading, paragraph, action, showCancelBtn) => {
+		alert.value.heading = heading
+		alert.value.paragraph = paragraph
+		alert.value.action = action
+		alert.value.showCancelBtn = showCancelBtn
+		alert.value.show = true
+	}
+
+	watch(
+		() => alert.value.show,
+		(currentVal) => {
+			if (currentVal === 'ok' && alert.value.action === 'deleteAttribute') deleteAttribute()
+
+			if (currentVal === 'ok' && alert.value.action === 'deleteTerm') deleteTerm()
+		}
+	)
+
 	await fetchAll()
 </script>
 
@@ -135,29 +184,27 @@
 	<div class="h-full flex-col items-center gap-2 p-3">
 		<div class="flex-row items-center justify-between w-full max-w-130">
 			<h3>Attributes</h3>
-			<button
-				class="btn btn__primary btn__pill px-2 py-02 flex-row gap1"
-				@click="attributes.push({ name: '', terms: [] })"
-			>
+			<button class="btn btn__primary btn__pill px-2 py-02 flex-row gap1" @click="addNewAttribute">
 				<IconsPlus class="w-2 h-2" />
 				Add New
 			</button>
 		</div>
 		<div class="flex-1 max-w-130 w-full flex-col gap3">
 			<div class="flex-col gap-2 br5" v-if="totalCount">
-				<div class="flex-row items-center gap-3 bg-white p-2 shadow-md br-3">
+				<div class="flex-row items-center gap-3">
 					<Search class="flex-1" @searchKeywordSelected="handleSearch" />
-					<Sort :sortOptions="sortOptions" @toggleSort="toggleSort" />
+					<Sort :sort="sort" :sortOptions="sortOptions" @toggleSort="toggleSort" />
 				</div>
 				<table class="shadow-md border border-slate-300">
 					<thead class="bg-slate-300">
 						<tr>
+							<th>order</th>
 							<th>Attribute Name</th>
 							<th>Attribute Terms</th>
 							<th>Actions</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody v-if="attributes.length">
 						<EcommerceAttributesCard
 							v-for="(attribute, index) in attributes"
 							:key="attribute._id"
@@ -166,6 +213,8 @@
 							:showAction="showActionKeys[index]"
 							@setActions="setActions"
 							@attributeUpdated="fetchAll"
+							@deleteAttribute="showDeleteAttributeAlert"
+							@deleteTerm="showDeleteTermAlert"
 						/>
 					</tbody>
 				</table>

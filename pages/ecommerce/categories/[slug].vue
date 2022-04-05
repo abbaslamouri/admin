@@ -9,43 +9,29 @@ definePageMeta({
 })
 
 // const { category } = useStore()
+const { $fetchBySlug, $fetchAll, $saveDoc, $deleteDocs } = useNuxtApp()
 const config = useRuntimeConfig()
-
 const { errorMsg, message, galleryMedia, mediaReference, showMediaSelector } = useAppState()
 const route = useRoute()
 const router = useRouter()
-console.log('ROUTER', router.getRoutes())
-
 const categories = ref([])
-const category = ref({ name: 'AAAAAAA', order: '0', parent: {}, gallery: [] })
+const category = ref({})
 const galleryIntro = ref('This image gallery contains all images associated with this category.')
 const slug = route.params.slug === ' ' ? null : route.params.slug
+let response = null
 
-const fetchAll = async () => {
-  errorMsg.value = ''
-  message.value = ''
-  try {
-    const { data, pending, error } = await useFetch(`${config.API_URL}/categories/`)
-    if (error.value) throw error.value
-    console.log('DATA', data.value)
-    categories.value = data.value.docs
-    if (slug) category.value = categories.value.find((c) => c.slug === slug)
-    console.log(category.value)
-  } catch (err) {
-    console.log(err)
-  }
-}
+response = await $fetchAll('categories')
+categories.value = response.docs
+response = await $fetchBySlug('categories', slug)
+if (Object.values(response).length) category.value = response
+else category.value = { name: '', order: '0', gallery: [] }
 
 const updateDetails = (details) => {
   category.value = { ...category.value, ...details }
 }
 
 const updateParent = (parentId) => {
-  console.log(
-    'PPPPP',
-    categories.value.find((c) => c._id == parentId)
-  )
-  category.value.parent = categories.value.find((c) => c._id == parentId)
+  category.value.parent = categories.value.find((c) => c._id == parentId) || null
 }
 
 // Set category gallery
@@ -60,30 +46,34 @@ const setImageGallery = async (media) => {
 }
 
 const saveCategory = async () => {
-  errorMsg.value = ''
-  message.value = ''
+  // // errorMsg.value = ''
+  // message.value = ''
+  console.log(category.value.name)
   if (!category.value.name) return (errorMsg.value = 'Category name is required')
   category.value.slug = slugify(category.value.name, { lower: true })
   if (!category.value.permalink) category.value.permalink = slugify(category.value.name, { lower: true })
+  const id = category.value._id ? category.value._id : null
+  response = await $saveDoc('categories', category.value, id)
+  if (!response) return
 
-  try {
-    if (category.value._id) {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/categories/${category.value._id}`, {
-        method: 'PATCH',
-        body: category.value,
-      })
-    } else {
-      const { data, pending, error } = await useFetch(`${config.API_URL}/categories/`, {
-        method: 'POST',
-        body: category.value,
-      })
-    }
-    if (error.value) throw error.value
-    console.log('DATA', data.value)
-  } catch (err) {
-    console.log(err)
-  }
-  // router.push({ name: 'ecommerce-categories' })
+  // try {
+  //   if (category.value._id) {
+  //     const { data, pending, error } = await useFetch(`${config.API_URL}/categories/${category.value._id}`, {
+  //       method: 'PATCH',
+  //       body: category.value,
+  //     })
+  //   } else {
+  //     const { data, pending, error } = await useFetch(`${config.API_URL}/categories/`, {
+  //       method: 'POST',
+  //       body: category.value,
+  //     })
+  //   }
+  //   if (error.value) throw error.value
+  //   console.log('DATA', data.value)
+  // } catch (err) {
+  //   console.log(err)
+  // }
+  router.push({ name: 'ecommerce-categories' })
   message.value = 'Category saved succesfully'
 }
 
@@ -122,7 +112,7 @@ watch(
 //   { deep: true }
 // )
 
-await fetchAll()
+// await fetchAll()
 </script>
 
 <template>

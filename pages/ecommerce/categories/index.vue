@@ -7,23 +7,24 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
+const { $fetchAll, $deleteDoc } = useNuxtApp()
+
 const { errorMsg, message, alert } = useAppState()
 const categories = ref([])
 const categoryToDeleteId = ref(null)
 const totalCount = ref(null) // Total item count in the database
 const keyword = ref(null)
 const page = ref(1)
-const perPage = ref(3)
+const perPage = ref(10)
 const sort = reactive({
-  field: 'sortOrder',
-  order: '',
+  field: 'createdAt',
+  order: '-',
 })
-
 const fields = '-updatedAt'
 const sortOptions = [
   { key: 'sortOrder', name: 'Order' },
   { key: 'name', name: 'name' },
-  { key: 'createAt', name: 'Date Created' },
+  { key: 'createdAt', name: 'Date Created' },
 ]
 
 const params = computed(() => {
@@ -45,19 +46,9 @@ const pages = computed(() =>
 )
 
 const fetchAll = async () => {
-  errorMsg.value = null
-  message.value = null
-  try {
-    const { data, pending, error } = await useFetch(`${config.API_URL}/categories/`, {
-      params: params.value,
-    })
-    if (error.value) throw error.value
-    console.log('DATA', data.value)
-    categories.value = data.value.docs
-    totalCount.value = data.value.totalCount
-  } catch (err) {
-    console.log(err)
-  }
+  const response = await $fetchAll('categories', params.value)
+  categories.value = response.docs
+  totalCount.value = response.totalCount
 }
 
 const setPage = async (currentPage) => {
@@ -68,7 +59,6 @@ const setPage = async (currentPage) => {
 const handleSearch = async (searchKeyword) => {
   keyword.value = searchKeyword
   page.value = 1
-  console.log('PARAMDS', params.value)
   await fetchAll()
 }
 
@@ -83,24 +73,14 @@ const showDeleteCategoryAlert = (categoryId) => {
   showAlert('Are you sure you want to delete this category?', '', 'deleteCategory', true)
 }
 
-const deleteCategory = async (doc) => {
-  const category = categories.value.find((c) => c._id == categoryToDeleteId.value)
-  if (!category)
-    return (errorMsg.value = `We are not able to find a category with this ID: ${categoryToDeleteId.value} `)
-
-  try {
-    const { data, pending, error } = await useFetch(`${config.API_URL}/categories/${categoryToDeleteId.value}`, {
-      method: 'DELETE',
-    })
-    if (error.value) throw error.value
-    categoryToDeleteId.value = null
-    alert.value.show = false
-    alert.value.action = ''
-    await fetchAll()
-    message.value = `Category ${category.name} deleted succesfully`
-  } catch (err) {
-    console.log(err.data)
-  }
+const deleteCategory = async () => {
+  const response = await $deleteDoc('categories', categoryToDeleteId.value)
+  if (!response) message.value = 'We were unable to delete this product'
+  categoryToDeleteId.value = null
+  alert.value.show = false
+  alert.value.action = ''
+  await fetchAll()
+  message.value = `Category deleted succesfully`
 }
 
 const showAlert = (heading, paragraph, action, showCancelBtn) => {
@@ -119,7 +99,6 @@ watch(
 )
 
 await fetchAll()
-console.log('PPPPP', categories.value)
 </script>
 
 <template>
@@ -136,7 +115,7 @@ console.log('PPPPP', categories.value)
       <div class="flex-col gap-3 flex-col br-5">
         <div class="flex-row items-center gap-3 border-b-slate-300 p-2" v-if="totalCount">
           <Search class="flex-1" @searchKeywordSelected="handleSearch" />
-          <Sort :sortOptions="sortOptions" @toggleSort="toggleSort" />
+          <Sort :sort="sort" :sortOptions="sortOptions" @toggleSort="toggleSort" />
         </div>
         <EcommerceCategoriesList
           :categories="categories"

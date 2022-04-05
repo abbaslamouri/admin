@@ -1,6 +1,6 @@
 <script setup>
 const route = useRoute()
-console.log('ROUTE', route)
+// console.log('ROUTE', route)
 const showEcommreceSubMenu = ref(false)
 </script>
 

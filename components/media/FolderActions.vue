@@ -10,8 +10,8 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  folderSortOrder: {
-    type: String,
+  sort: {
+    type: Object,
   },
   selectedFolder: {
     type: Object,
@@ -88,7 +88,7 @@ const saveNewFolder = async () => {
     <div class="text-sm flex-row gap-3">
       <div class="flex-row items-center">
         <!-- <span>Sort Order</span> -->
-        <Sort :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
+        <Sort :sort="sort" :sortOptions="sortOptions" @toggleSort="$emit('toggleSort', $event)" />
         <!-- <button class="btn">
           <IconsSouth class="w-2 h-2 fill-sky-600" v-if="folderSortOrder == '-'" />
           <IconsNorth class="w-2 h-2 fill-sky-600" v-else />

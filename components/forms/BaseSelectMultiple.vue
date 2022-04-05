@@ -58,10 +58,10 @@ export default {
 
 <template>
   <div class="listbox-area">
-    <button class="select p1 bg-transparent w-full cursor-pointer" @click="showListBox = !showListBox">
+    <button class="select p-1 bg-transparent w-full cursor-pointer" @click="showListBox = !showListBox">
       <div class="label" v-if="!items.length" role="label">Select Categories</div>
-      <div class="selected-options flex-row wrap gap05" v-else>
-        <span class="bg-slate-700 text-slate-50 px05 py02 br3" v-for="item in items" :key="item">
+      <div class="selected-options flex-row wrap gap-05" v-else>
+        <span class="bg-slate-700 text-slate-50 px-05 py-02 br-3" v-for="item in items" :key="item">
           {{ options.find((c) => c.key == item).name }}</span
         >
       </div>
@@ -84,7 +84,7 @@ export default {
         :aria-selected="items.includes(option.key)"
       >
         <label
-          class="options flex-row items-center gap1 cursor-pointer"
+          class="options flex-row items-center gap-1 cursor-pointer"
           :class="{ disabled: inputRefs[index] && inputRefs[index].disabled }"
         >
           <input

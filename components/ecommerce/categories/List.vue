@@ -103,7 +103,7 @@ const handleDeleteCategory = (categoryId) => {
         <div class="">Create nested product categories with category images and descriptions</div>
         <NuxtLink
           class="btn btn__primary btn__pill px-3 py-05 text-xs items-self-end"
-          :to="{ name: 'ecommerce-products-slug', params: { slug: ' ' } }"
+          :to="{ name: 'index', params: { slug: ' ' } }"
         >
           <IconsPlus class="w2 h2" />
           <span>Add</span>

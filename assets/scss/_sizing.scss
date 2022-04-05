@@ -4,7 +4,7 @@
   width: 100%;
 }
 
-.w-996 {
+.w-996p {
   width: 996px;
 }
 
@@ -164,6 +164,10 @@
   min-width: 9rem;
 }
 
+.min-w-10 {
+  min-width: 10rem;
+}
+
 .min-w-12 {
   min-width: 12rem;
 }
@@ -220,6 +224,10 @@
   max-width: 20rem;
 }
 
+.min-w-100-percent {
+  min-width: 100%;
+}
+
 .max-w-40 {
   max-width: 40rem;
 }
@@ -230,6 +238,10 @@
 
 .w-50-percent {
   width: 50%;
+}
+
+.w-100-percent {
+  width: 100%;
 }
 
 .min-w-sm {

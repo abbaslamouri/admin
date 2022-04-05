@@ -15,98 +15,63 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['setActions', 'attributeUpdated', 'deleteAttribute'])
-
-const { errorMsg, alert } = useAppState()
-// const { saveDoc, deleteDoc, deleteMany } = useFactory()
+const emit = defineEmits(['setActions', 'attributeUpdated', 'deleteAttribute', 'deleteTerm'])
+const config = useRuntimeConfig()
+const { message, errorMsg, alert } = useAppState()
 const newTerm = ref(null)
-const termToDelete = ref('')
 const termInputRef = ref(null)
 const newAttribute = reactive({
   ...props.attribute,
 })
-let response = null
 
-const saveAttribute = async () => {
-  errorMsg.value = null
-  if (!newAttribute.name) return (errorMsg.value = 'Attribute name is required')
-  newAttribute.slug = slugify(newAttribute.name, { lower: true })
-  response = await saveDoc('attributes', newAttribute)
-  if (response.ok && response.ok === false) return (errorMsg.value = response.errorMsg)
-  emit('attributeUpdated', response)
-  errorMsg.value = null
-}
-
-const showDeleteAttributeAlert = () => {
-  showAlert('Are you sure you want to delete this attribute?', '', 'deleteAttribute', true)
-}
-
-const deleteAttribute = async () => {
-  errorMsg.value = null
-  response = await deleteDoc('attributes', props.attribute._id)
-  if (response.status === 'error') return (errorMsg.value = response.errorMsg)
-  console.log('A', response)
-  response = await deleteMany('attributeterms', { parent: props.attribute._id })
-  if (response.status === 'error') return (errorMsg.value = response.errorMsg)
-  console.log('T', response)
-  alert.value.action = ''
-  alert.value.show = false
+const addAttribute = async () => {
+  console.log(newAttribute)
+  errorMsg.value = ''
+  message.value = ''
+  try {
+    const { data, pending, error } = await useFetch(`${config.API_URL}/attributes`, {
+      method: 'POST',
+      body: newAttribute,
+    })
+    if (error.value) throw error.value
+    emit('attributeUpdated', data.value.doc)
+  } catch (err) {
+    console.log('ERRRRR', err)
+    errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
+  }
 }
 
 const addAttributeTerm = async () => {
-  errorMsg.value = null
-  if (!props.attribute.name) return (errorMsg.value = 'Attribute name is required')
-  const termSlug = slugify(newTerm.value, { lower: true })
-  if (props.attributeTerms.find((t) => t.slug === termSlug))
-    return (errorMsg.value = 'Terms must be unique for each attribute')
-  response = await saveDoc('attributeterms', { name: newTerm.value, slug: termSlug, parent: props.attribute._id })
-  if (response && response.ok === false) return (errorMsg.value = response.errorMsg)
-  newTerm.value = ''
-  emit('attributeUpdated')
-}
-
-const showDeleteTermAlert = (termId) => {
-  termToDelete.value = termId
-  showAlert(
-    'Are you sure you want to delete this attribute term?',
-    'You must also delete al variants containig this term',
-    'deleteTerm',
-    true
-  )
-}
-
-const deleteTerm = async () => {
-  errorMsg.value = null
-  response = await deleteDoc('attributeterms', termToDelete.value)
-  if (response.status === 'error') return (errorMsg.value = response.data)
-  termToDelete.value = ''
-  alert.value.action = ''
-  alert.value.show = false
-  emit('attributeUpdated')
-}
-
-const showAlert = (heading, paragraph, action, showCancelBtn) => {
-  alert.value.heading = heading
-  alert.value.paragraph = paragraph
-  alert.value.action = action
-  alert.value.showCancelBtn = showCancelBtn
-  alert.value.show = true
-}
-
-watch(
-  () => alert.value.show,
-  (currentVal) => {
-    if (currentVal === 'ok' && alert.value.action === 'deleteAttribute') deleteAttribute()
-    if (currentVal === 'ok' && alert.value.action === 'deleteTerm') deleteTerm()
+  errorMsg.value = ''
+  message.value = ''
+  try {
+    if (!props.attribute._id) return (errorMsg.value = 'Attribute is required')
+    const termSlug = slugify(newTerm.value, { lower: true })
+    if (props.attribute.attributeterms.find((t) => t.slug === termSlug))
+      return (errorMsg.value = 'Terms must be unique for each attribute')
+    const { data, pending, error } = await useFetch(`${config.API_URL}/attributeterms`, {
+      method: 'POST',
+      body: { name: newTerm.value, slug: termSlug, parent: props.attribute._id },
+    })
+    console.log('DATA', data.value)
+    if (error.value) throw error.value
+    newTerm.value = ''
+    emit('attributeUpdated')
+    console.log(data.value.doc)
+  } catch (err) {
+    console.log('ERRRRRRRR', err)
+    errorMsg.value = err.data && err.data.message ? err.data.message : err.message ? err.message : ''
   }
-)
+
+}
 </script>
 
 <template>
   <tr class="admin-attribute row">
+    <td>{{ newAttribute.sortOrder }}</td>
     <td class="max-w-10">
       <div class="base-input">
-        <input type="text" required v-model="newAttribute.name" @keyup.enter="saveAttribute" />
+        <input type="text" required v-model="newAttribute.name" @keyup.enter="addAttribute" />
       </div>
     </td>
     <td>
@@ -118,7 +83,7 @@ watch(
         >
           <span>{{ term.name }}</span>
           <button class="btn btn__secondary">
-            <IconsClose class="w-1 h-1 fill-slate-50" @click="showDeleteTermAlert(term._id)" />
+            <IconsClose class="w-1 h-1 fill-slate-50" @click="$emit('deleteTerm', term._id)" />
           </button>
         </div>
         <div class="form-group" @click="checkIfAttribute">
@@ -139,7 +104,7 @@ watch(
       <EcommerceActions
         :showAction="showAction"
         @moreHoriz="$emit('setActions', { index: index, action: !showAction })"
-        @deleteAction="showDeleteAttributeAlert"
+        @deleteAction="$emit('deleteAttribute', attribute._id)"
         @cancel="$emit('setActions', { index: index, action: false })"
       />
     </td>

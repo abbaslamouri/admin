@@ -6,22 +6,11 @@ const config = useRuntimeConfig()
 
 const signout = async () => {
   showProfileDropdown.value = false
-  // errorMsg.value = null
-  // message.value = null
-  const { data, pending, error } = await useFetch(`${config.BASE_URL}/${config.API_BASE}/auth/signout`)
-  // if (error.value) errorMsg.value = error.value.data.message
-
-  const auth = useCookie('auth')
-  auth.value = data.value.auth
-
-  console.log(error.value ? error.value.data : '')
-  console.log(data.value)
-
-  // const response = await logout()
-  // errorMsg.value = null
-  // message.value = null
-  // if (response.ok === false) return (errorMsg.value = response.errorMsg)
-  // token.value = null
+  const { data, pending, error } = await useFetch(`${config.API_URL}/auth/signout`)
+  const auth = useCookie('auth', { expires: new Date(Date.now() + 1000), path: '/' })
+  auth.value = ''
+  user.value = ''
+  token.value = ''
   isAuthenticated.value = false
   if (process.client) localStorage.removeItem('cart')
   message.value = 'You are logged out'

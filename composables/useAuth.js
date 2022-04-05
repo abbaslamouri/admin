@@ -6,7 +6,7 @@ const useAuth = () => {
     useCookie('auth').value && useCookie('auth').value.token ? useCookie('auth').value.token : null
   )
 
-  const isAuthenticated = useState('isAuthenticated', () => (token.value ? true : false))
+  const isAuthenticated = useState('isAuthenticated', () => (token && token.value ? true : false))
 
   const isAdmin = useState('isAdmin', () => (user.value && user.value.role === 'admin' ? true : false))
 

@@ -1,87 +1,61 @@
 <script setup>
-import slugify from 'slugify'
-
 useMeta({
   title: 'Product | YRL',
 })
 definePageMeta({
   layout: 'admin',
-  // middleware: ['saved-product'],
 })
 
-const { product, variants } = useStore()
-const { galleryMedia, mediaReference, fetchBySlug, fetchAll, saveDoc, saveDocs, deleteMany } = useFactory()
-const { errorMsg, message, showMediaSelector } = useAppState()
+const { product } = useStore()
+const { errorMsg, message, showMediaSelector, mediaReference, galleryMedia } = useAppState()
 
 const route = useRoute()
 const router = useRouter()
-
+const { $fetchBySlug, $saveDoc, $deleteDocs } = useNuxtApp()
 const showAttributesSlideout = ref(false)
 const showVariantsSlideout = ref(false)
 let response = null
 const galleryIntro = ref('This image gallery contains all images associated with this product including its variants.')
-const slug = route.params.slug === ' ' ? null : route.params.slug
+let slug = route.params.slug === ' ' ? null : route.params.slug
 
-response = await fetchBySlug('products', slug)
-if (response && response.ok === false) errorMsg.value = response.error
-if (response) product.value = response
-variants.value = product.value._id
-  ? (
-      await fetchAll('variants', {
-        fields: 'product, attrattributeTerms, gallery',
-        product: product.value._id,
-      })
-    ).docs
-  : []
-
-// Set category gallery
-const setImageGallery = async (media) => {
-  console.log('mediap', media)
-  console.log(product.value)
-  for (const prop in media) {
-    const index = product.value.gallery.findIndex((el) => el._id == media[prop]._id)
-    if (index === -1) {
-      product.value.gallery.push(media[prop])
-    }
-  }
-  console.log(product.value.gallery)
-}
+response = await $fetchBySlug('products', slug)
+if (Object.values(response).length) product.value = response
+else product.value = { productType: 'simple', gallery: [], attributes: [], variants: [], categories: [] }
+// console.log(product.value)
 
 const saveProduct = async () => {
   console.log(product.value)
   if (!product.value.name) return (errorMsg.value = 'Product name is required')
-  product.value.slug = slugify(product.value.name, { lower: true })
-  if (!product.value.permalink) product.value.permalink = slugify(product.value.name, { lower: true })
-  response = await saveDoc('products', product.value)
-  console.log('SAVE', response)
+  const id = product.value._id ? product.value._id : null
+  const newProduct = await $saveDoc('products', product.value, id)
+  if (!newProduct) return
+  slug = newProduct.slug
+  message.value = 'product saved succesfully'
+  response = await $deleteDocs('variants', { docs: product.value.variants })
   if (!response) return
-  product.value = response
-  console.log('Product', product.value)
-  response = await deleteMany('variants', { product: product.value._id })
-  if (!response) return
-
-  if (!variants.value.length) {
-    router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
-    return (message.value = 'product saved succesfully')
-  }
-  console.log('Variants', variants.value)
-  response = await saveDocs('variants', variants.value)
-  if (!response) return
-  router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
-  message.value = 'product and variants saved succesfully'
-  showAttributesSlideout.value = false
-  // router.push({ name: 'admin-ecommerce-products-slug', params: { slug: product.value.slug } })
+  if (product.value.variants.length) response = await $saveDoc('variants', product.value.variants)
+  router.push({ name: 'ecommerce-products-slug', params: { slug } })
+  message.value = 'product saved succesfully'
+  // response = await $fetchBySlug('products', slug)
+  // if (response) product.value = response
 }
-provide('saveProduct', saveProduct)
 
 const handleNewMediaSelectBtnClicked = () => {
   mediaReference.value = 'productMedia'
   showMediaSelector.value = true
 }
 
-const updateStoreGallery = (gallery) => {
-  console.log(gallery)
-  product.value.gallery = gallery
+// Set category gallery
+const setImageGallery = async (media) => {
+  // console.log('mediap', media)
+  // console.log(product.value)
+  for (const prop in media) {
+    const index = product.value.gallery.findIndex((el) => el._id == media[prop]._id)
+    if (index === -1) {
+      product.value.gallery.push(media[prop])
+    }
+  }
+  // console.log(product.value.gallery)
 }
 
 watch(
@@ -89,46 +63,46 @@ watch(
   (currentVal) => {
     console.log(currentVal)
     if (mediaReference.value === 'productMedia') setImageGallery(currentVal)
-    // store.showMediaSelector = false
-    // store.galleryMedia = []
   },
   { deep: true }
 )
-
-provide('saveProduct', saveProduct)
 </script>
 
 <template>
-  <div class="hfull flex-col items-center gap2 p3">
-    <header class="flex-col gap2 w-full max-width-130">
+  <div class="hfull flex-col items-center gap-2 p-3">
+    <header class="flex-col gap-2 w-full max-width-130">
       <div class="go-back" id="product-go-back">
-        <NuxtLink class="admin-link" :to="{ name: 'admin-ecommerce-products' }">
+        <NuxtLink class="admin-link" :to="{ name: 'ecommerce-products' }">
           <IconsArrowWest /><span>Products</span>
         </NuxtLink>
       </div>
       <h3 class="header">Edit Product</h3>
     </header>
-    <!-- {{ product }} -->
     <main class="main flex-1 max-width-130 w-full">
       <div class="left-sidebar shadow-md">
-        <EcommerceAdminProductLeftSidebar />
+        <EcommerceProductLeftSidebar :product="product" />
       </div>
-
-      <div class="flex-col gap2">
-        <EcommerceAdminProductGeneralInfo />
-        <EcommerceAdminProductPrice />
-        <EcommerceAdminProductStockManagement />
-        <section class="admin-image-gallery shadow-md p2 flex-col gap2 bg-white" id="image-gallery">
-          <div class="flex-row items-center justify-between text-sm mb1">
+      <div class="flex-col gap-2">
+        <EcommerceProductGeneralInfo
+          :product="product"
+          @updateGeneralInfo="product.value = { ...product.value, ...$event }"
+        />
+        <EcommerceProductPrice :product="product" @updatePrice="product.value = { ...product.value, ...$event }" />
+        <EcommerceProductStockManagement
+          :product="product"
+          @updateStock="product.value = { ...product.value, ...$event }"
+        />
+        <section class="admin-image-gallery shadow-md p-2 flex-col gap-2 bg-white" id="image-gallery">
+          <div class="flex-row items-center justify-between text-sm mb-1">
             <div class="uppercase inline-block border-b-stone-300 font-bold pb05">Image Gallery</div>
             <div></div>
           </div>
-          <div class="flex-col flex-col items-center gap2">
-            <div class="intro flex-row items-center gap1 bg-slate-200 py1 px2 br3 text-sm" v-if="galleryIntro">
-              <IconsInfo class="w3 h3 fill-sky-600" />
+          <div class="flex-col flex-col items-center gap-2">
+            <div class="intro flex-row items-center gap-1 bg-slate-200 py-1 px-2 br3 text-sm" v-if="galleryIntro">
+              <IconsInfo class="w-3 h-3 fill-sky-600" />
               <p>{{ galleryIntro }}</p>
             </div>
-            <EcommerceAdminImageGallery
+            <EcommerceImageGallery
               :gallery="product.gallery"
               :galleryIntro="galleryIntro"
               galleryType="product"
@@ -145,64 +119,41 @@ provide('saveProduct', saveProduct)
           </div>
         </section>
 
-        <EcommerceAdminProductsAttributesContent
+        <EcommerceProductAttributesContent
           v-if="product._id && product.productType === 'variable'"
-          @showAttributesSlideout="showAttributesSlideout = $event"
+          @toggleAttributesSlideout="showAttributesSlideout = $event"
         />
-        <EcommerceAdminProductsAttributesSlideout
+        <EcommerceProductAttributesSlideout
           v-if="showAttributesSlideout"
-          @closeSlideout="showAttributesSlideout = false"
+          @toggleAttributesSlideout="showAttributesSlideout = $event"
           @saveAttributes="saveProduct"
         />
 
-        <!-- <section
-          class="variants"
-          id="variants"
-          v-if="product._id && product.productType === 'variable' && product.attributes.length"
-        > -->
-        <EcommerceAdminProductsVariantsContent
-          @showVariantsSlideout="showVariantsSlideout = $event"
+        <EcommerceProductVariantsContent
+          @toggleVariantsSlideout="showVariantsSlideout = $event"
           v-if="product._id && product.productType === 'variable' && product.attributes.length"
         />
-        <EcommerceAdminProductsVariantsSlideout
+        <EcommerceProductVariantsSlideout
           v-if="showVariantsSlideout"
-          @closeSlideout="showVariantsSlideout = false"
+          @toggleVariantsSlideout="showVariantsSlideout = $event"
           @saveVariants="saveProduct"
         />
-        <!-- </section> -->
-        <EcommerceAdminProductDetails />
+        <EcommerceProductDetails :product="product" @updateDetails="product.value = { ...product.value, ...$event }" />
 
-        <EcommerceAdminProductShippingOptions :product="product" />
-        <EcommerceAdminProductDigitalDelivery :product="product" />
-        <EcommerceAdminProductExtraFields :product="product" />
-        <EcommerceAdminProductSeo :product="product" />
-        <EcommerceAdminProductMisc :product="product" />
+        <EcommerceProductShippingOptions :product="product" />
+        <EcommerceProductDigitalDelivery :product="product" />
+        <EcommerceProductExtraFields :product="product" />
+        <EcommerceProductSeo :product="product" />
+        <EcommerceProductMisc :product="product" />
       </div>
       <div class="right-sidebar">
-        <EcommerceAdminProductRightSidebar @productStatusUpdated="product.status = $event" @saveProduct="saveProduct" />
-      </div>
-      <!-- </div> -->
-
-      <div class="product-details">
-        <!-- <Html>
-			<Head><Title>Product</Title></Head>
-		</Html> -->
-
-        <!-- <pre style="font-size: 1rem">{{ store.product }}</pre> -->
-
-        <!-- <div class="media-selector" v-if="showMediaSelector">
-			<LazyMediaUploader
-				@mediaSelected="setImageGallery"
-				@mediaSelectCancel="showMediaSelector = false"
-				v-if="showMediaSelector"
-			/>
-		</div> -->
-        <div class="go-to-top">
-          <a href="#product-go-back" class="btn">Go To Top</a>
-        </div>
+        <EcommerceProductRightSidebar @productStatusUpdated="product.status = $event" @saveProduct="saveProduct" />
       </div>
     </main>
-    <footer class="w-full max-width-130">Footer</footer>
+    <div class="w-full flex-row justify-end px-4 sticky bottom-4 go-to-top">
+      <a href="#product-go-back" class="btn btn__secondary px-2 py-1">Go To Top</a>
+    </div>
+    <footer class="w-full max-width-130 bg-slate-300 px-2 py-1 br-5 flex-row justify-center text-2xl">Footer</footer>
   </div>
 </template>
 
@@ -210,7 +161,6 @@ provide('saveProduct', saveProduct)
 @import '@/assets/scss/variables';
 
 .main {
-  // .columns {
   display: grid;
   grid-template-columns: 18rem 1fr 25rem;
   gap: 2rem;
@@ -225,12 +175,6 @@ provide('saveProduct', saveProduct)
     padding: 2rem 0.5rem;
   }
 
-  // .main {
-  //   display: flex;
-  //   flex-direction: column;
-  //   gap: 3rem;
-  // }
-
   .right-sidebar {
     position: sticky;
     top: 10rem;
@@ -238,73 +182,10 @@ provide('saveProduct', saveProduct)
     flex-direction: column;
     gap: 2rem;
   }
-  // }
-  // max-width: 1280px;
-  // min-height: 100vh;
-  // padding: 2rem;
-  // display: flex;
-  // flex-direction: column;
-  // gap: 2rem;
-
-  // .link {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 0.3rem;
-
-  //   svg {
-  //     width: 1.8rem;
-  //     height: 1.8rem;
-  //   }
-  // }
-
-  // .columns {
-  //   display: grid;
-  //   grid-template-columns: 18rem 1fr 25rem;
-  //   gap: 2rem;
-  //   align-items: flex-start;
-
-  //   .left {
-  //     position: sticky;
-  //     top: 10rem;
-  //     background-color: white;
-  //     border: 1px solid $slate-100;
-  //     border-radius: 3px;
-  //     padding: 2rem 0.5rem;
-  //   }
-
-  //   .center {
-  //     display: flex;
-  //     flex-direction: column;
-  //     gap: 3rem;
-  //   }
-
-  //   .right {
-  //     position: sticky;
-  //     top: 10rem;
-  //     display: flex;
-  //     flex-direction: column;
-  //     gap: 2rem;
-  //   }
-  // }
-
-  // .link {
-  //   font-weight: 500;
-  //   color: $slate-400;
-
-  //   &:hover {
-  //     color: $slate-800;
-  //   }
-  // }
-
-  // .go-to-top {
-  //   text-align: right;
-  //   // border: 1px solid red;
-  //   position: sticky;
-  //   bottom: 5rem;
-
-  //   a {
-  //     display: inline-block;
-  //   }
-  // }
 }
+
+// .go-to-top {
+//   position: sticky;
+//   bottom: 4rem;
+// }
 </style>

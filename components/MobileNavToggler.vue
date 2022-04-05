@@ -50,9 +50,9 @@ defineEmits(['hideAdminSidebar']);
       fill: $slate-400;
     }
 
-    @media only screen and (min-width: 768px) {
-      display: none;
-    }
+    // @media only screen and (min-width: 768px) {
+    //   display: none;
+    // }
   }
 }
 </style>
